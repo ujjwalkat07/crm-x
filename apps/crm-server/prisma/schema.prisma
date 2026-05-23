@@ -33,8 +33,6 @@ model Lead {
   phone            String?
   company          String?
   status           LeadStatus @default(Open)
-  dealValue        Decimal?   @db.Decimal(12, 2)
-  currency         String     @default("INR")
   priority         Priority   @default(MEDIUM)
   tags             String[]
   notes            String?
