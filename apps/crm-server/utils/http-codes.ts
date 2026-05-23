@@ -1,0 +1,27 @@
+interface ICodes {
+  OK: number;
+  CREATED: number;
+  BAD_REQUEST: number;
+  UNAUTHORIZED: number;
+  FORBIDDEN: number;
+  NOT_FOUND: number;
+  CONFLICT: number;
+  UNPROCESSABLE_CONTENT: number;
+  TOO_MANY_REQUESTS: number;
+  SERVICE_UNAVAILABLE: number;
+  INTERNAL_SERVER_ERROR: number;
+}
+
+export const HttpCodes: ICodes = {
+  OK: 200,
+  CREATED: 201,
+  BAD_REQUEST: 400,
+  UNAUTHORIZED: 401,
+  FORBIDDEN: 403,
+  NOT_FOUND: 404,
+  CONFLICT: 409,
+  UNPROCESSABLE_CONTENT: 422,
+  TOO_MANY_REQUESTS: 429,
+  SERVICE_UNAVAILABLE: 503,
+  INTERNAL_SERVER_ERROR: 500,
+};
