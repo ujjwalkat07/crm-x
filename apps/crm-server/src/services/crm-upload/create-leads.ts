@@ -1,13 +1,27 @@
 import { Response } from "express";
 import { AuthRequest } from "../../middleware/jwt-verify";
-import {getPrisma} from "../../lib/prisma";
+import { getPrisma } from "../../lib/prisma";
+import { CreateLeadBody } from "../../types/types";
 
-export const createLead = async (req: AuthRequest, res: Response) => {
+export const createLead = async (
+  req: AuthRequest,
+  res: Response
+): Promise<Response> => {
   try {
     const prisma = getPrisma();
-    
 
-    const leadData = req.body;
+    const user = req.user?.fullname || "Unknown Mentor";
+
+    // Typed request body
+    const leadData: CreateLeadBody = req.body;
+
+    // Validation
+    if (!leadData.customerName) {
+      return res.status(400).json({
+        message: "Customer name is required",
+      });
+    }
+
     const lead = await prisma.lead.create({
       data: {
         customerName: leadData.customerName,
@@ -16,21 +30,32 @@ export const createLead = async (req: AuthRequest, res: Response) => {
         company: leadData.company,
         jobTitle: leadData.jobTitle,
         source: leadData.source,
-        status: leadData.status || "NEW",
-        dealValue: leadData.dealValue,
-        currency: leadData.currency || "USD",
+        status: req.body.status,
         priority: leadData.priority || "MEDIUM",
         tags: leadData.tags || [],
         notes: leadData.notes,
-        lastContactDate: leadData.lastContactDate,
-        nextFollowUpDate: leadData.nextFollowUpDate,
+        lastContactDate: leadData.lastContactDate
+          ? new Date(leadData.lastContactDate)
+          : null,
+
+        nextFollowUpDate: leadData.nextFollowUpDate
+          ? new Date(leadData.nextFollowUpDate)
+          : null,
+
         assignedToId: leadData.assignedToId,
-      }
+      },
     });
 
-    return res.status(201).json(lead);
-  } catch (error: any) {
+    return res.status(201).json({
+      message: "Lead created successfully",
+      createdBy: user,
+      data: lead,
+    });
+  } catch (error: unknown) {
     console.error("CreateLead Error:", error);
-    return res.status(500).json({ message: "Internal server error" });
+
+    return res.status(500).json({
+      message: "Internal server error",
+    });
   }
 };
