@@ -22,3 +22,13 @@ export * from './enums';
  * 
  */
 export type User = Prisma.UserModel
+/**
+ * Model Lead
+ * 
+ */
+export type Lead = Prisma.LeadModel
+/**
+ * Model CallLog
+ * 
+ */
+export type CallLog = Prisma.CallLogModel

@@ -51,7 +51,9 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  User: 'User'
+  User: 'User',
+  Lead: 'Lead',
+  CallLog: 'CallLog'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -81,6 +83,40 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const LeadScalarFieldEnum = {
+  id: 'id',
+  customerName: 'customerName',
+  email: 'email',
+  phone: 'phone',
+  company: 'company',
+  status: 'status',
+  dealValue: 'dealValue',
+  currency: 'currency',
+  priority: 'priority',
+  tags: 'tags',
+  notes: 'notes',
+  lastContactDate: 'lastContactDate',
+  nextFollowUpDate: 'nextFollowUpDate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LeadScalarFieldEnum = (typeof LeadScalarFieldEnum)[keyof typeof LeadScalarFieldEnum]
+
+
+export const CallLogScalarFieldEnum = {
+  id: 'id',
+  leadId: 'leadId',
+  userId: 'userId',
+  status: 'status',
+  duration: 'duration',
+  notes: 'notes',
+  calledAt: 'calledAt'
+} as const
+
+export type CallLogScalarFieldEnum = (typeof CallLogScalarFieldEnum)[keyof typeof CallLogScalarFieldEnum]
 
 
 export const SortOrder = {

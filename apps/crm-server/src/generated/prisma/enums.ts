@@ -9,7 +9,31 @@
 * 🟢 You can import this file directly.
 */
 
+export const LeadStatus = {
+  Open: 'Open',
+  Active: 'Active',
+  Closed: 'Closed',
+  Lost: 'Lost'
+} as const
+
+export type LeadStatus = (typeof LeadStatus)[keyof typeof LeadStatus]
 
 
-// This file is empty because there are no enums in the schema.
-export {}
+export const Priority = {
+  HIGH: 'HIGH',
+  MEDIUM: 'MEDIUM',
+  LOW: 'LOW'
+} as const
+
+export type Priority = (typeof Priority)[keyof typeof Priority]
+
+
+export const CallStatus = {
+  SCHEDULED: 'SCHEDULED',
+  COMPLETED: 'COMPLETED',
+  NO_ANSWER: 'NO_ANSWER',
+  CALLBACK_REQUESTED: 'CALLBACK_REQUESTED',
+  VOICEMAIL: 'VOICEMAIL'
+} as const
+
+export type CallStatus = (typeof CallStatus)[keyof typeof CallStatus]
