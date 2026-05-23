@@ -7,7 +7,7 @@ import {
 } from "../../../utils/utils-export";
 
 export interface AuthDocument {
-  _id: string;
+  id: string;
   fullName: string;
   email: string;
   password: string;
@@ -20,7 +20,7 @@ export interface AuthDocument {
 }
 
 export interface PublicAuthUser {
-  _id: string;
+  id: string;
   fullName: string;
   fullname: string;
   email: string;
@@ -39,7 +39,7 @@ type UserRecord = {
 };
 
 const toAuthDocument = (user: UserRecord): AuthDocument => ({
-  _id: user.id,
+  id: user.id,
   fullName: user.fullName,
   email: user.email,
   password: user.password,
@@ -48,14 +48,14 @@ const toAuthDocument = (user: UserRecord): AuthDocument => ({
   updatedAt: user.updatedAt,
   GenrateAccessToken() {
     return accessTokenJwtSign({
-      _id: user.id,
+      id: user.id,
       email: user.email,
       fullname: user.fullName,
     });
   },
   GenrateRefreshToken() {
     return refreshTokenJwtSign({
-      _id: user.id,
+      id: user.id,
     });
   },
   IsPasswordCorrect(password: string) {
@@ -66,7 +66,7 @@ const toAuthDocument = (user: UserRecord): AuthDocument => ({
 export const sanitizeAuthUser = (
   user: UserRecord | AuthDocument | PublicAuthUser,
 ): PublicAuthUser => ({
-  _id: "id" in user ? user.id : user._id,
+  id: user.id,
   fullName: user.fullName,
   fullname: user.fullName,
   email: user.email,
@@ -123,7 +123,7 @@ export class Auth {
 
     return user
       ? {
-        _id: user.id,
+        id: user.id,
         fullName: user.fullName,
         fullname: user.fullName,
         email: user.email,

@@ -10,7 +10,7 @@ export const createLead = async (
   try {
     const prisma = getPrisma();
 
-    const user = req.user?.fullname || "Unknown Mentor";
+    const userId = req.user?.id;
 
     // Typed request body
     const leadData: CreateLeadBody = req.body;
@@ -28,8 +28,6 @@ export const createLead = async (
         email: leadData.email,
         phone: leadData.phone,
         company: leadData.company,
-        jobTitle: leadData.jobTitle,
-        source: leadData.source,
         status: req.body.status,
         priority: leadData.priority || "MEDIUM",
         tags: leadData.tags || [],
@@ -42,15 +40,17 @@ export const createLead = async (
           ? new Date(leadData.nextFollowUpDate)
           : null,
 
-        assignedToId: leadData.assignedToId,
+        assignedToId: userId,
       },
     });
 
     return res.status(201).json({
       message: "Lead created successfully",
-      createdBy: user,
+      createdBy: userId,
       data: lead,
+      lead
     });
+
   } catch (error: unknown) {
     console.error("CreateLead Error:", error);
 

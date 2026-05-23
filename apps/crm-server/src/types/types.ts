@@ -1,12 +1,10 @@
+
 export interface CreateLeadBody {
   customerName: string;
   email?: string;
   phone?: string;
   company?: string;
-  jobTitle?: string;
-  source?: string;
-  dealValue?: number;
-  currency?: string;
+  status?: "Open" | "Closed" | "Lost" | "Active";
   priority?: "LOW" | "MEDIUM" | "HIGH";
   tags?: string[];
   notes?: string;

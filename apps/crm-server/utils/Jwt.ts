@@ -2,7 +2,7 @@ import jwt, { Secret, SignOptions, JwtPayload } from "jsonwebtoken";
 import { config } from "../src/config/env-config/config";
 
 interface payload extends JwtPayload {
-  _id: string;
+  id: string;
   email?: string;
   fullname?: string;
 }

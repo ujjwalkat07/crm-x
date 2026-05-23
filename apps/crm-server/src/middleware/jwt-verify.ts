@@ -10,7 +10,7 @@ import {
 
 export interface AuthRequest extends Request {
   user?: {
-    _id: string;
+    id: string;
     fullname: string;
     email: string;
   };
