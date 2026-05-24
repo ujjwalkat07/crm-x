@@ -34,9 +34,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const checkSession = async () => {
     try {
-      const response = await api.post("/api/auth/verify-token",{
-          withCredentials: true,
+      const response = await api.post("/api/auth/verify-token", {}, {
+        withCredentials: true,
       });
+
+      console.log("Session verification response:", response);
       setUser(response.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -47,7 +49,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setError("Something went wrong. Please try again.");
       }
     }
+    finally {
+      setIsLoading(false) 
+    }
   }
+
+
   return (
     <AuthContext.Provider value={{
       user,

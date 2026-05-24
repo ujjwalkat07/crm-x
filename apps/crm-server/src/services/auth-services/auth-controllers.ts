@@ -279,7 +279,6 @@ const verifyJWTToken: RequestHandler = async (
 ) => {
   try {
     const token = getAccessTokenFromRequest(req);
-console.log("token from cookie or header:", token);
     if (!token) {
       throw new ApiErrorHandling(400, "token invalid");
     }

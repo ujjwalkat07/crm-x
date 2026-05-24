@@ -11,7 +11,7 @@ export default function DashboardPage() {
   
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      router.push('/login')
+      router.push('/api/auth/login')
     }
   }, [isLoading, isAuthenticated])
 
