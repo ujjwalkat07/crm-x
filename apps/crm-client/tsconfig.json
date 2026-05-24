@@ -17,7 +17,7 @@
     "next-env.d.ts",
     "next.config.js",
     ".next/types/**/*.ts"
-,     "proxy.txt"  ],
+,     "proxy.txt", "app/dashboard/lead-table"  ],
   "exclude": [
     "node_modules"
   ]
