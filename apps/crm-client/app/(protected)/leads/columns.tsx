@@ -90,8 +90,8 @@ export const columns: ColumnDef<User>[] = [
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="h-8 w-20 p-0">
-              change
               <span className="sr-only">Open menu</span>
+              change
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
