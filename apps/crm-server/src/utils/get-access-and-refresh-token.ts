@@ -11,7 +11,7 @@ const getAccessAndRefreshToken = async (userId: string) => {
     const accessToken = user.GenrateAccessToken();
     const refreshToken = user.GenrateRefreshToken();
 
-    await Auth.updateRefreshToken(user._id, refreshToken);
+    await Auth.updateRefreshToken(user.id, refreshToken);
 
     return { accessToken, refreshToken };
   } catch (error) {

@@ -9,7 +9,7 @@ import {
   authCookieOptions,
   getAccessTokenFromRequest,
   getRefreshTokenFromRequest,
-} from "../../../utils/utils-export";
+} from "../../utils/utils-export";
 import { Request, Response, RequestHandler } from "express";
 import { AuthRequest } from "../../middleware/jwt-verify";
 
@@ -295,7 +295,7 @@ console.log("token from cookie or header:", token);
       throw new ApiErrorHandling(401, "Invalid Access Token");
     }
 
-    res
+    return res
       .status(HttpCodes.OK)
       .json(
         new ApiResponse(

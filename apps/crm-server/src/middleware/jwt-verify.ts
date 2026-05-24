@@ -6,7 +6,7 @@ import {
   jwtVerifyAccessToken,
   ApiErrorHandling,
   getAccessTokenFromRequest,
-} from "../../utils/utils-export";
+} from "../utils/utils-export";
 
 export interface AuthRequest extends Request {
   user?: {
@@ -41,7 +41,7 @@ const verifyJWT: RequestHandler = async (
     }
     req.user = sanitizeAuthUser(user);
 
-    next();
+    return next();
   } catch (error) {
     if (error instanceof ApiErrorHandling) {
       return res

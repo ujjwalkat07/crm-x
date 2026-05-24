@@ -5,7 +5,7 @@ import {
   userLogout,
   genrateNewAccessAndRefreshToken,
   verifyJWTToken,
-} from "./auth-controllers";
+} from "../auth-services/auth-controllers";
 import { verifyJWT } from "../../middleware/jwt-verify";
 
 const authRoutes: Router = Router();

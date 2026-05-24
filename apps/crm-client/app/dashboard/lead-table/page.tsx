@@ -1,17 +1,14 @@
-import { useAuth } from "@/provider/AuthProvider";
-import type { Metadata } from "next";
-import { useRouter } from "next/dist/client/components/navigation";
-import { useEffect } from "react";
+"use client"
 
-export const metadata: Metadata = {
-  title: "Dashboard — CRM",
-  description: "Your CRM dashboard overview.",
-};
+import { useAuth } from "@/provider/AuthProvider";
+import { redirect, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function DashboardPage() {
   const { user, isLoading, isAuthenticated } = useAuth()
   const router = useRouter()
-
+  console.log(isAuthenticated, isLoading, user)
+  
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       router.push('/login')

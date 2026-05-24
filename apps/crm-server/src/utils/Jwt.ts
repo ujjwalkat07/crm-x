@@ -1,5 +1,5 @@
 import jwt, { Secret, SignOptions, JwtPayload } from "jsonwebtoken";
-import { config } from "../src/config/env-config/config";
+import { config } from "../../src/config/env-config/config";
 
 interface payload extends JwtPayload {
   id: string;

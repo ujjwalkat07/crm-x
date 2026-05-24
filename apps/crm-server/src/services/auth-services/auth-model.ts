@@ -4,7 +4,7 @@ import {
   refreshTokenJwtSign,
   hashPassword,
   comparePassword,
-} from "../../../utils/utils-export";
+} from "../../utils/utils-export";
 
 export interface AuthDocument {
   id: string;
