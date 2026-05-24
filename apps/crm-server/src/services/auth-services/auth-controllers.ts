@@ -56,7 +56,7 @@ const userSignup = async (
       password,
     });
 
-    const userCreated = await Auth.findPublicById(user._id);
+    const userCreated = await Auth.findPublicById(user.id);
 
     if (!userCreated) {
       throw new ApiErrorHandling(
@@ -129,9 +129,9 @@ const userLogin = async (
     }
 
     const { accessToken, refreshToken } = await getAccessAndRefreshToken(
-      String(user._id),
+      String(user.id),
     );
-    // const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
+    // const loggedInUser = await User.findById(user.id).select("-password -refreshToken")
     //loggedInUser is optionally because we can also extract user details directly from stored jwt tokens
 
     // If you want to return a token, generate it here
@@ -176,8 +176,8 @@ const userLogin = async (
 };
 
 const userLogout = async (req: AuthRequest, res: Response) => {
-  if (req.user?._id) {
-    await Auth.clearRefreshToken(req.user._id);
+  if (req.user?.id) {
+    await Auth.clearRefreshToken(req.user.id);
   }
 
   interface IOptions {
