@@ -3,55 +3,57 @@ import { AuthRequest } from "../../middleware/jwt-verify";
 import { prisma } from "../../lib/prisma";
 import { CreateLeadBody } from "../../types/types";
 
-export const createLead = async (
+export const updateLead = async (
   req: AuthRequest,
   res: Response
 ): Promise<Response> => {
   try {
-    const userId = req.user?.id;
+    const { id } = req.params as { id: string };
+    const leadData: Partial<CreateLeadBody> = req.body;
 
-    // Typed request body
-    const leadData: CreateLeadBody = req.body;
-
-    // Validation
-    if (!leadData.customerName) {
+    if (!id) {
       return res.status(400).json({
-        message: "Customer name is required",
+        message: "Lead ID is required",
       });
     }
 
-    const lead = await prisma.lead.create({
+    const existingLead = await prisma.lead.findUnique({
+      where: { id },
+    });
+
+    if (!existingLead) {
+      return res.status(404).json({
+        message: "Lead not found",
+      });
+    }
+
+    const updatedLead = await prisma.lead.update({
+      where: { id },
       data: {
         customerName: leadData.customerName,
         email: leadData.email,
         phone: leadData.phone,
         company: leadData.company,
-        status: req.body.status,
-        priority: leadData.priority || "MEDIUM",
-        tags: leadData.tags || [],
+        status: leadData.status,
+        priority: leadData.priority,
+        tags: leadData.tags,
         notes: leadData.notes,
         lastContactDate: leadData.lastContactDate
           ? new Date(leadData.lastContactDate)
-          : null,
-
+          : undefined,
         nextFollowUpDate: leadData.nextFollowUpDate
           ? new Date(leadData.nextFollowUpDate)
-          : null,
-
-        assignedToId: userId,
+          : undefined,
+        assignedToId: leadData.assignedToId || undefined,
       },
     });
 
-    return res.status(201).json({
-      message: "Lead created successfully",
-      createdBy: userId,
-      data: lead,
-      lead
+    return res.status(200).json({
+      message: "Lead updated successfully",
+      data: updatedLead,
     });
-
   } catch (error: unknown) {
-    console.error("CreateLead Error:", error);
-
+    console.error("UpdateLead Error:", error);
     return res.status(500).json({
       message: "Internal server error",
     });

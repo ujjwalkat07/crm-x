@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import { authRoutes } from "./services/auth-services/auth-routes";
+import { leadRoutes } from "./services/crm-upload/upload-routes";
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use(cookieParser());
 
 
 app.use("/api/auth", authRoutes);
+app.use("/api/leads", leadRoutes);
 
 
 app.get("/", (_req, res) => {
