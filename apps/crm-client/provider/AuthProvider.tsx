@@ -34,7 +34,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const checkSession = async () => {
     try {
-      const response = await api.get("/api/auth/session");
+      const response = await api.post("/api/auth/verify-token",{
+          withCredentials: true,
+      });
       setUser(response.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {

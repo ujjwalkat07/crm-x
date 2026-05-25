@@ -2,7 +2,7 @@ import axios from "axios";
 // import { useRouter } from "next/navigation";
 
 export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_URL,
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
   withCredentials: true,
 });
 

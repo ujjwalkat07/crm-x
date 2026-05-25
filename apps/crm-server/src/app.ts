@@ -8,25 +8,17 @@ import { authRoutes } from "./services/auth-services/auth-routes";
 dotenv.config();
 
 const app = express();
+const allowedOrigins = ["http://localhost:3000"];
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-const allowedOrigins = [
-  "https://lamp-mih.vercel.app",
-  "http://localhost:3000"
-];
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
-      return callback(new Error("Not allowed by CORS"));
-    },
+app.use(cors({
+    origin: allowedOrigins,
     credentials: true,
   }),
 );
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.use(cookieParser());
 
 
