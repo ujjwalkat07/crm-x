@@ -244,15 +244,6 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
 
           {/* Header Right */}
           <div className="flex items-center gap-4">
-            {/* Notification Bell */}
-            <Button
-              variant="ghost"
-              size="icon-xs"
-              className="text-muted-foreground hover:text-foreground relative"
-            >
-              <Bell className="w-4.5 h-4.5" />
-              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-destructive rounded-full" />
-            </Button>
 
             {/* Profile Dropdown */}
             <DropdownMenu>
