@@ -3,7 +3,7 @@ import { AuthRequest } from "../../middleware/jwt-verify";
 import { prisma } from "../../lib/prisma";
 
 export const getAllLeads = async (
-  req: AuthRequest,
+  _req: AuthRequest,
   res: Response
 ): Promise<Response> => {
   try {

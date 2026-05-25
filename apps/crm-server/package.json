@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsx watch src/server.ts"
+    "dev": "tsx watch src/server.ts",
+    "build": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\" && tsc"
   },
   "keywords": [],
   "author": "",
