@@ -33,7 +33,6 @@ export const deleteLead = async (
       message: "Lead deleted successfully",
     });
   } catch (error: unknown) {
-    console.error("DeleteLead Error:", error);
     return res.status(500).json({
       message: "Internal server error",
     });

@@ -5,13 +5,11 @@ import { HttpCodes } from "../utils/http-codes";
 const getAccessAndRefreshToken = async (userId: string) => {
   try {
     const user = await Auth.findById(userId);
-    // console.log(user)
     if (!user) {
       throw new ApiErrorHandling(HttpCodes.BAD_REQUEST, "User not found");
     }
     const accessToken = user.GenrateAccessToken();
     const refreshToken = user.GenrateRefreshToken();
-    console.log(accessToken, refreshToken)
     await Auth.updateRefreshToken(user.id, refreshToken);
 
     return { accessToken, refreshToken };

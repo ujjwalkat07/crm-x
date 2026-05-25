@@ -53,7 +53,6 @@ export const updateLead = async (
       data: updatedLead,
     });
   } catch (error: unknown) {
-    console.error("UpdateLead Error:", error);
     return res.status(500).json({
       message: "Internal server error",
     });

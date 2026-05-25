@@ -52,7 +52,6 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
       await api.post('/api/auth/logout')
       window.location.href = '/login'
     } catch (err) {
-      console.error("Logout failed:", err)
       window.location.href = '/login'
     }
   }

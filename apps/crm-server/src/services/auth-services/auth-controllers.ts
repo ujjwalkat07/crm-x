@@ -120,7 +120,6 @@ const userLogin = async (
     // let userID = await User.findById(email);
     // Compare passwords (assuming password is stored as plain text, but in production use bcrypt to secure more with salt)
     const checkUserPasssowrd = await user.IsPasswordCorrect(password);
-    console.log(checkUserPasssowrd);
     if (!checkUserPasssowrd) {
       throw new ApiErrorHandling(
         HttpCodes.BAD_REQUEST,
@@ -132,7 +131,6 @@ const userLogin = async (
       String(user.id),
     );
 
-    console.log(accessToken, refreshToken);
     // const loggedInUser = await User.findById(user.id).select("-password -refreshToken")
     //loggedInUser is optionally because we can also extract user details directly from stored jwt tokens
 
@@ -157,7 +155,6 @@ const userLogin = async (
         ),
       );
   } catch (error) {
-    console.error("Login error:", error);
     //we can check if error is instance of ApiError
     //we use oops concept to handle the error
     if (error instanceof ApiErrorHandling) {
@@ -226,7 +223,7 @@ const genrateNewAccessAndRefreshToken = async (req: Request, res: Response) => {
       );
     }
 
-    const storedDBToken = await Auth.findById(user?.UserPayLoad._id);
+    const storedDBToken = await Auth.findById(user?.UserPayLoad.id);
 
     if (storedDBToken?.refreshToken !== localToken) {
       throw new ApiErrorHandling(
@@ -236,7 +233,7 @@ const genrateNewAccessAndRefreshToken = async (req: Request, res: Response) => {
     }
 
     const { accessToken, refreshToken } = await getAccessAndRefreshToken(
-      user.UserPayLoad._id,
+      user.UserPayLoad.id,
     );
     //why we use this keyword because i am using the constructor to maintain the code readbility so, to access the method define in constructor with this keyword
 
@@ -257,22 +254,26 @@ const genrateNewAccessAndRefreshToken = async (req: Request, res: Response) => {
           "succesfull refresh tokens",
         ),
       );
-  } catch (error) {
+  } catch (error: any) {
     if (error instanceof ApiErrorHandling) {
       return res
         .status(error.statusCode)
         .json(new ApiResponse(error.statusCode, null, error.message));
-    } else {
-      return res
-        .status(HttpCodes.INTERNAL_SERVER_ERROR)
-        .json(
-          new ApiResponse(
-            HttpCodes.INTERNAL_SERVER_ERROR,
-            null,
-            "Internal Server Error",
-          ),
-        );
     }
+    if (error?.name === "JsonWebTokenError" || error?.name === "TokenExpiredError") {
+      return res
+        .status(400)
+        .json(new ApiResponse(400, null, "invalid or expired refresh token"));
+    }
+    return res
+      .status(HttpCodes.INTERNAL_SERVER_ERROR)
+      .json(
+        new ApiResponse(
+          HttpCodes.INTERNAL_SERVER_ERROR,
+          null,
+          "Internal Server Error",
+        ),
+      );
   }
 };
 
@@ -291,7 +292,7 @@ const verifyJWTToken: RequestHandler = async (
       throw new ApiErrorHandling(HttpCodes.BAD_REQUEST, "Invalid Token");
     }
 
-    const user = await Auth.findPublicById(decodedToken.UserPayLoad._id);
+    const user = await Auth.findPublicById(decodedToken.UserPayLoad.id);
 
     if (!user) {
       throw new ApiErrorHandling(401, "Invalid Access Token");
@@ -306,11 +307,17 @@ const verifyJWTToken: RequestHandler = async (
           "User verified successfully",
         ),
       );
-  } catch (error) {
+  } catch (error: any) {
+    console.log("Error in verifyJWTToken:", error);
     if (error instanceof ApiErrorHandling) {
       return res
         .status(error.statusCode)
         .json(new ApiResponse(error.statusCode, null, error.message));
+    }
+    if (error?.name === "JsonWebTokenError" || error?.name === "TokenExpiredError") {
+      return res
+        .status(400)
+        .json(new ApiResponse(400, null, "token invalid or expired"));
     }
 
     return res

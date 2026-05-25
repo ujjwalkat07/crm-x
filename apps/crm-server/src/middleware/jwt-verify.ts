@@ -34,7 +34,7 @@ const verifyJWT: RequestHandler = async (
       throw new ApiErrorHandling(HttpCodes.BAD_REQUEST, "Invalid Token");
     }
 
-    const user = await Auth.findPublicById(decodedToken.UserPayLoad?._id);
+    const user = await Auth.findPublicById(decodedToken.UserPayLoad?.id);
 
     if (!user) {
       throw new ApiErrorHandling(401, "Invalid Access Token");
@@ -42,11 +42,17 @@ const verifyJWT: RequestHandler = async (
     req.user = sanitizeAuthUser(user);
 
     return next();
-  } catch (error) {
+  } catch (error: any) {
     if (error instanceof ApiErrorHandling) {
       return res
         .status(error.statusCode)
         .json(new ApiResponse(error.statusCode, null, error.message));
+    }
+
+    if (error?.name === "JsonWebTokenError" || error?.name === "TokenExpiredError") {
+      return res
+        .status(400)
+        .json(new ApiResponse(400, null, "token invalid or expired"));
     }
 
     return res

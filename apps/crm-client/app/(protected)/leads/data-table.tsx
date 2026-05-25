@@ -86,7 +86,6 @@ export function DataTable<TData, TValue>({
         }))
         setLocalData(mappedLeads)
       } catch (err) {
-        console.error("Failed to fetch leads:", err)
       }
     }
     fetchLeads()
@@ -105,7 +104,6 @@ export function DataTable<TData, TValue>({
       setLocalData(prev => prev.filter((lead: any) => !idsToDelete.includes(lead.id)))
       table.resetRowSelection()
     } catch (err) {
-      console.error("Failed to delete selected leads:", err)
       alert("Failed to delete some selected leads.")
     }
   }
@@ -169,7 +167,6 @@ export function DataTable<TData, TValue>({
       setTags('')
       setIsAddModalOpen(false)
     } catch (err) {
-      console.error("Failed to add lead:", err)
       alert("Failed to add lead to server.")
     }
   }
@@ -223,7 +220,6 @@ export function DataTable<TData, TValue>({
       setEditingLeadId(null)
       setIsAddModalOpen(false)
     } catch (err) {
-      console.error("Failed to update lead:", err)
       alert("Failed to update lead.")
     }
   }
@@ -245,7 +241,6 @@ export function DataTable<TData, TValue>({
           await api.delete(`/api/leads/${id}`)
           setLocalData(prev => prev.filter((lead: any) => lead.id !== id))
         } catch (err) {
-          console.error("Failed to delete lead:", err)
           alert("Failed to delete lead.")
         }
       },
@@ -258,7 +253,6 @@ export function DataTable<TData, TValue>({
             )
           )
         } catch (err) {
-          console.error("Failed to update status:", err)
           alert("Failed to update lead status.")
         }
       }
@@ -271,7 +265,7 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   })
-  console.log(table.getRowModel().rows)
+
   return (
     <>
       {/* Filters */}

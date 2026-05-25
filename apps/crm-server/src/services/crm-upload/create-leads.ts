@@ -50,8 +50,6 @@ export const createLead = async (
     });
 
   } catch (error: unknown) {
-    console.error("CreateLead Error:", error);
-
     return res.status(500).json({
       message: "Internal server error",
     });

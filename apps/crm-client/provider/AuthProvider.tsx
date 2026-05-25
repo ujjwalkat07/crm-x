@@ -38,7 +38,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         withCredentials: true,
       });
 
-      console.log("Session verification response:", response);
       setUser(response.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {

@@ -16,7 +16,6 @@ export const getAllLeads = async (
       data: leads,
     });
   } catch (error: unknown) {
-    console.error("GetAllLeads Error:", error);
     return res.status(500).json({
       message: "Internal server error",
     });
@@ -51,7 +50,6 @@ export const getLeadById = async (
       data: lead,
     });
   } catch (error: unknown) {
-    console.error("GetLeadById Error:", error);
     return res.status(500).json({
       message: "Internal server error",
     });
