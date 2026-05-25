@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      pnpm:
+        specifier: ^11.3.0
+        version: 11.3.0
       prettier:
         specifier: ^3.7.4
         version: 3.7.4
@@ -3686,6 +3689,11 @@ packages:
 
   pkg-types@2.3.1:
     resolution: {integrity: sha512-y+ichcgc2LrADuhLNAx8DFjVfgz91pRxfZdI3UDhxHvcVEZsenLO+7XaU5vOp0u/7V/wZ+plyuQxtrDlZJ+yeg==}
+
+  pnpm@11.3.0:
+    resolution: {integrity: sha512-LEA9ZZRScodnKx9wVjQ6H3w2NANqZ/+r/MKz11ldhDdo+HhxSNG1fPeVbJBga70ZKFfDY68Z6W0tDsnsV0HSFQ==}
+    engines: {node: '>=22.13'}
+    hasBin: true
 
   possible-typed-array-names@1.1.0:
     resolution: {integrity: sha512-/+5VFTchJDoVj3bhoqi6UeymcD00DAwb1nJwamzPvHEszJ4FpF6SNNbUbOS8yI56qHzdV8eK0qEfOSiodkTdxg==}
@@ -7959,6 +7967,8 @@ snapshots:
       confbox: 0.2.4
       exsolve: 1.0.8
       pathe: 2.0.3
+
+  pnpm@11.3.0: {}
 
   possible-typed-array-names@1.1.0: {}
 
