@@ -74,19 +74,28 @@ export const columns: ColumnDef<User>[] = [
   },
   {
     accessorKey: 'priority',
-    header: 'Priority'
+    header: 'Priority',
+    filterFn: 'equals',
   },
   {
     accessorKey: 'tags',
-    header: 'Tags'
+    header: 'Tags',
+    filterFn: (row, columnId, filterValue) => {
+      if (!filterValue) return true;
+      const rowTags = row.getValue(columnId);
+      if (Array.isArray(rowTags)) {
+        return rowTags.some(tag => String(tag).toLowerCase() === String(filterValue).toLowerCase());
+      }
+      return false;
+    }
   },
   {
-    id: 'action',
-    accessorKey: 'Status',
+    accessorKey: 'status',
     header: 'Status',
+    filterFn: 'equals',
     cell: ({ row, table }) => {
       const user = row.original
-      const currentStatus = row.getValue('Status') as string
+      const currentStatus = row.getValue('status') as string
 
       return (
         <DropdownMenu>

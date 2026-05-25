@@ -28,17 +28,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import axios from 'axios';
 
 function DashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const router = useRouter()
   const { user } = useAuth()
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
+  const [error, setError] = useState("");
 
   const userData = (user as any)?.data || user
   const fullName = userData?.fullName || userData?.fullname || "CRM Member"
   const email = userData?.email || "member@crm.com"
-  
+
   // Initials for avatar
   const initials = fullName
     .split(' ')
@@ -50,9 +52,15 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   const handleLogout = async () => {
     try {
       await api.post('/api/auth/logout')
-      window.location.href = '/login'
+      window.location.href = "/login"
     } catch (err) {
-      window.location.href = '/login'
+      if (axios.isAxiosError(err)) {
+        setError(
+          err.response?.data?.message || "Logout failed. Please try again.",
+        );
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
     }
   }
 
@@ -88,13 +96,12 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
               <Link
                 key={link.name}
                 href={link.disabled ? '#' : link.href}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                  link.disabled
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${link.disabled
                     ? 'opacity-40 cursor-not-allowed hover:bg-transparent'
                     : isActive
-                    ? 'bg-primary text-primary-foreground shadow-xs shadow-primary/10'
-                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                }`}
+                      ? 'bg-primary text-primary-foreground shadow-xs shadow-primary/10'
+                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                  }`}
                 onClick={(e) => link.disabled && e.preventDefault()}
               >
                 <Icon className={`w-4 h-4 ${isActive ? 'text-primary-foreground' : 'text-muted-foreground'}`} />
@@ -157,13 +164,12 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
                   <Link
                     key={link.name}
                     href={link.disabled ? '#' : link.href}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                      link.disabled
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${link.disabled
                         ? 'opacity-40 cursor-not-allowed'
                         : isActive
-                        ? 'bg-primary text-primary-foreground shadow-xs'
-                        : 'text-muted-foreground hover:bg-muted'
-                    }`}
+                          ? 'bg-primary text-primary-foreground shadow-xs'
+                          : 'text-muted-foreground hover:bg-muted'
+                      }`}
                     onClick={(e) => {
                       if (link.disabled) e.preventDefault()
                       else setIsMobileSidebarOpen(false)

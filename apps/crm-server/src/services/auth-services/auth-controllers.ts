@@ -180,20 +180,10 @@ const userLogout = async (req: AuthRequest, res: Response) => {
     await Auth.clearRefreshToken(req.user.id);
   }
 
-  interface IOptions {
-    httpOnly: boolean;
-    secure: boolean;
-  }
-
-  const options: IOptions = {
-    httpOnly: true,
-    secure: true,
-  };
-
   return res
     .status(200)
-    .clearCookie("accessToken", options)
-    .clearCookie("refreshToken", options)
+    .clearCookie("accessToken", authCookieOptions)
+    .clearCookie("refreshToken", authCookieOptions)
     .json(new ApiResponse(200, {}, "User logged Out"));
 };
 

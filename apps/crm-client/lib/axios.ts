@@ -31,10 +31,9 @@ api.interceptors.response.use(
       !originalRequest._retry
     ) {
       originalRequest._retry = true;
-
       try {
         await axios.post(
-          `${process.env.NEXT_PUBLIC_URL}/api/auth/new-refresh-token`,
+          `${process.env.NEXT_PUBLIC_API_URL}/api/auth/new-refresh-token`,
           {},
           {
             withCredentials: true,

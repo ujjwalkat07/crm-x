@@ -35,7 +35,7 @@ import {
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { CircleFadingPlus, CircleStop, Search, Tags, Plus, X, Trash2 } from 'lucide-react';
+import { CircleFadingPlus, CircleStop, Search, Tags, Plus, X, Trash2, SlidersHorizontal } from 'lucide-react';
 import { Field, FieldLabel } from '@/components/ui/field'
 import { api } from '@/lib/axios'
 
@@ -79,7 +79,7 @@ export function DataTable<TData, TValue>({
           company: lead.company || "-",
           priority: lead.priority ? lead.priority.toLowerCase() : "medium",
           tags: lead.tags || [],
-          Status: lead.status || "Open",
+          status: lead.status || "Open",
           lastSeen: lead.lastContactDate || new Date().toISOString(),
           'next date': lead.nextFollowUpDate || new Date().toISOString(),
           image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=60'
@@ -115,7 +115,7 @@ export function DataTable<TData, TValue>({
     setPhone(lead.phone === '-' ? '' : lead.phone || '')
     setCompany(lead.company === '-' ? '' : lead.company || '')
     setPriority(lead.priority ? lead.priority.charAt(0).toUpperCase() + lead.priority.slice(1) : 'Medium')
-    setStatus(lead.Status === 'Open' ? 'Lead' : lead.Status || 'Lead')
+    setStatus(lead.status === 'Open' ? 'Lead' : lead.status || 'Lead')
     setTags(lead.tags ? lead.tags.join(', ') : '')
     setIsAddModalOpen(true)
   }
@@ -149,7 +149,7 @@ export function DataTable<TData, TValue>({
         company: createdLead.company || "-",
         priority: createdLead.priority ? createdLead.priority.toLowerCase() : "medium",
         tags: createdLead.tags || [],
-        Status: createdLead.status || "Open",
+        status: createdLead.status || "Open",
         lastSeen: createdLead.lastContactDate || new Date().toISOString(),
         'next date': createdLead.nextFollowUpDate || new Date().toISOString(),
         image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=60'
@@ -199,7 +199,7 @@ export function DataTable<TData, TValue>({
         company: updatedLead.company || "-",
         priority: updatedLead.priority ? updatedLead.priority.toLowerCase() : "medium",
         tags: updatedLead.tags || [],
-        Status: updatedLead.status || "Open",
+        status: updatedLead.status || "Open",
         lastSeen: updatedLead.lastContactDate || new Date().toISOString(),
         'next date': updatedLead.nextFollowUpDate || new Date().toISOString(),
         image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=60'
@@ -249,7 +249,7 @@ export function DataTable<TData, TValue>({
           await api.put(`/api/leads/${id}`, { status: newStatus })
           setLocalData(prev =>
             prev.map((lead: any) =>
-              lead.id === id ? { ...lead, Status: newStatus } : lead
+              lead.id === id ? { ...lead, status: newStatus } : lead
             )
           )
         } catch (err) {
@@ -265,6 +265,18 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   })
+
+  const statusFilter = (table.getColumn('status')?.getFilterValue() as string) ?? '';
+  const priorityFilter = (table.getColumn('priority')?.getFilterValue() as string) ?? '';
+  const tagsFilter = (table.getColumn('tags')?.getFilterValue() as string) ?? '';
+
+  const localDataArray = Array.isArray(localData) ? localData : [];
+
+  const allUniqueTags = Array.from(
+    new Set(
+      localDataArray.flatMap((lead: any) => lead.tags || [])
+    )
+  ).filter(Boolean);
 
   return (
     <>
@@ -299,95 +311,105 @@ export function DataTable<TData, TValue>({
           )}
         </div>
 
-        {/* Column visibility */}
+        {/* Column visibility and filtering */}
         <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground mr-1.5 uppercase tracking-wider">
+            <SlidersHorizontal className="w-3.5 h-3.5" />
+            <span>Filter</span>
+          </div>
+
           <DropdownMenu>
             <div className="flex flex-col">
-              <DropdownMenuLabel>Status </DropdownMenuLabel>
+              <DropdownMenuLabel className="text-[10px] font-bold text-muted-foreground/80 uppercase pb-1">Status</DropdownMenuLabel>
               <DropdownMenuTrigger asChild>
-                <Button variant='outline' className='w-30 '>
-                  <CircleStop className='w-4 h-4 text-black' />
-                  All Status
+                <Button variant='outline' className='w-32 justify-between active:scale-98 transition-all capitalize text-xs font-semibold'>
+                  <span className="flex items-center gap-1.5 truncate">
+                    <CircleStop className='w-3.5 h-3.5 text-foreground opacity-75' />
+                    {statusFilter || "All Status"}
+                  </span>
                 </Button>
               </DropdownMenuTrigger>
             </div>
-            <DropdownMenuContent align='end'>
-              {table
-                .getAllColumns()
-                .filter(column => column.getCanHide())
-                .map(column => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className='capitalize'
-                      checked={column.getIsVisible()}
-                      onCheckedChange={value => column.toggleVisibility(!!value)}
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  )
-                })}
+            <DropdownMenuContent align='end' className="w-40">
+              {['All Status', 'Open', 'Active', 'Closed', 'Lost'].map(item => (
+                <DropdownMenuCheckboxItem
+                  key={item}
+                  className='capitalize cursor-pointer'
+                  checked={item === 'All Status' ? !statusFilter : statusFilter === item}
+                  onCheckedChange={() => {
+                    table.getColumn('status')?.setFilterValue(item === 'All Status' ? undefined : item)
+                  }}
+                >
+                  {item}
+                </DropdownMenuCheckboxItem>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
 
           <DropdownMenu>
             <div className="flex flex-col">
-              <DropdownMenuLabel>Priority </DropdownMenuLabel>
+              <DropdownMenuLabel className="text-[10px] font-bold text-muted-foreground/80 uppercase pb-1">Priority</DropdownMenuLabel>
               <DropdownMenuTrigger asChild>
-                <Button variant='outline' className=''>
-                  <CircleFadingPlus />
-                  All Priority
+                <Button variant='outline' className='w-32 justify-between active:scale-98 transition-all capitalize text-xs font-semibold'>
+                  <span className="flex items-center gap-1.5 truncate">
+                    <CircleFadingPlus className='w-3.5 h-3.5 text-foreground opacity-75' />
+                    {priorityFilter ? (priorityFilter.charAt(0).toUpperCase() + priorityFilter.slice(1)) : "All Priority"}
+                  </span>
                 </Button>
               </DropdownMenuTrigger>
             </div>
-            <DropdownMenuContent align='end'>
-              {table
-                .getAllColumns()
-                .filter(column => column.getCanHide())
-                .map(column => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className='capitalize'
-                      checked={column.getIsVisible()}
-                      onCheckedChange={value => column.toggleVisibility(!!value)}
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  )
-                })}
+            <DropdownMenuContent align='end' className="w-40">
+              {['All Priority', 'Low', 'Medium', 'High'].map(item => (
+                <DropdownMenuCheckboxItem
+                  key={item}
+                  className='capitalize cursor-pointer'
+                  checked={item === 'All Priority' ? !priorityFilter : priorityFilter === item.toLowerCase()}
+                  onCheckedChange={() => {
+                    table.getColumn('priority')?.setFilterValue(item === 'All Priority' ? undefined : item.toLowerCase())
+                  }}
+                >
+                  {item}
+                </DropdownMenuCheckboxItem>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
+
           <DropdownMenu>
             <div className="flex flex-col">
-              <DropdownMenuLabel>Tags</DropdownMenuLabel>
+              <DropdownMenuLabel className="text-[10px] font-bold text-muted-foreground/80 uppercase pb-1">Tags</DropdownMenuLabel>
               <DropdownMenuTrigger asChild>
-                <Button variant='outline' className=''>
-                  <Tags />
-                  All Tags
+                <Button variant='outline' className='w-32 justify-between active:scale-98 transition-all capitalize text-xs font-semibold'>
+                  <span className="flex items-center gap-1.5 truncate">
+                    <Tags className='w-3.5 h-3.5 text-foreground opacity-75' />
+                    {tagsFilter || "All Tags"}
+                  </span>
                 </Button>
               </DropdownMenuTrigger>
             </div>
-            <DropdownMenuContent align='end'>
-              {table
-                .getAllColumns()
-                .filter(column => column.getCanHide())
-                .map(column => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className='capitalize'
-                      checked={column.getIsVisible()}
-                      onCheckedChange={value => column.toggleVisibility(!!value)}
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  )
-                })}
+            <DropdownMenuContent align='end' className="w-44 max-h-56 overflow-y-auto">
+              <DropdownMenuCheckboxItem
+                className='capitalize cursor-pointer'
+                checked={!tagsFilter}
+                onCheckedChange={() => {
+                  table.getColumn('tags')?.setFilterValue(undefined)
+                }}
+              >
+                All Tags
+              </DropdownMenuCheckboxItem>
+              {allUniqueTags.map(item => (
+                <DropdownMenuCheckboxItem
+                  key={item}
+                  className='capitalize cursor-pointer'
+                  checked={tagsFilter === item}
+                  onCheckedChange={() => {
+                    table.getColumn('tags')?.setFilterValue(tagsFilter === item ? undefined : item)
+                  }}
+                >
+                  {item}
+                </DropdownMenuCheckboxItem>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
-
-
         </div>
       </div>
 
