@@ -84,20 +84,30 @@ export const columns: ColumnDef<User>[] = [
     id: 'action',
     accessorKey: 'Status',
     header: 'Status',
-    cell: ({ row }) => {
+    cell: ({ row, table }) => {
+      const user = row.original
+      const currentStatus = row.getValue('Status') as string
 
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="h-8 w-20 p-0">
-              <span className="sr-only">Open menu</span>
-              change
-              <MoreHorizontal className="h-4 w-4" />
+            <Button variant="outline" className="h-8 min-w-[90px] px-2 py-1 flex items-center justify-between text-xs font-semibold capitalize">
+              {currentStatus || "Open"}
+              <MoreHorizontal className="h-3 w-3 ml-1.5 opacity-60" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            {['Open', 'Active', 'Closed', 'Lost'].map(status => (
+              <DropdownMenuItem
+                key={status}
+                className="capitalize"
+                onClick={() => {
+                  (table.options.meta as any)?.updateLeadStatus(user.id, status)
+                }}
+              >
+                {status}
+              </DropdownMenuItem>
+            ))}
           </DropdownMenuContent>
         </DropdownMenu>
       )
@@ -107,7 +117,8 @@ export const columns: ColumnDef<User>[] = [
     accessorKey: 'lastSeen',
     header: 'Last Contact',
     cell: ({ row }) => {
-      const date = new Date(row.getValue('lastSeen'))
+      const val = row.getValue('lastSeen')
+      const date = val ? new Date(val as string) : new Date()
       const formatted = date.toLocaleDateString()
       return <div className='font-medium'>{formatted}</div>
     }
@@ -115,10 +126,16 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: 'next date',
     header: 'Next Date',
+    cell: ({ row }) => {
+      const val = row.getValue('next date')
+      const date = val ? new Date(val as string) : new Date()
+      const formatted = date.toLocaleDateString()
+      return <div className='font-medium'>{formatted}</div>
+    }
   },
   {
     id: 'actions',
-    cell: ({ row }) => {
+    cell: ({ row, table }) => {
       const user = row.original
 
       return (
@@ -137,8 +154,24 @@ export const columns: ColumnDef<User>[] = [
               Copy user ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => {
+                (table.options.meta as any)?.editLead(user)
+              }}
+            >
+              Edit Lead
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="text-destructive focus:bg-destructive/10 cursor-pointer"
+              onClick={() => {
+                if (confirm("Are you sure you want to delete this lead?")) {
+                  (table.options.meta as any)?.deleteLead(user.id)
+                }
+              }}
+            >
+              Delete Lead
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )
