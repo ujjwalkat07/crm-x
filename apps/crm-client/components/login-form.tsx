@@ -42,7 +42,7 @@ export function LoginForm({
     setLoading(true);
     try {
       await api.post("http://localhost:3001/api/auth/login", { email, password });
-      router.push("/login");
+      router.push("/leads");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setError(
@@ -108,10 +108,10 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input 
-                  id="password" 
-                  type="password" 
-                  required 
+                <Input
+                  id="password"
+                  type="password"
+                  required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="********"

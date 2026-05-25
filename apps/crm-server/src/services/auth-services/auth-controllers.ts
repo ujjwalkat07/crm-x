@@ -120,7 +120,7 @@ const userLogin = async (
     // let userID = await User.findById(email);
     // Compare passwords (assuming password is stored as plain text, but in production use bcrypt to secure more with salt)
     const checkUserPasssowrd = await user.IsPasswordCorrect(password);
-
+    console.log(checkUserPasssowrd);
     if (!checkUserPasssowrd) {
       throw new ApiErrorHandling(
         HttpCodes.BAD_REQUEST,
@@ -131,6 +131,8 @@ const userLogin = async (
     const { accessToken, refreshToken } = await getAccessAndRefreshToken(
       String(user.id),
     );
+
+    console.log(accessToken, refreshToken);
     // const loggedInUser = await User.findById(user.id).select("-password -refreshToken")
     //loggedInUser is optionally because we can also extract user details directly from stored jwt tokens
 

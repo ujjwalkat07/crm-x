@@ -79,7 +79,6 @@ export class Auth {
     const user = await prisma.user.findUnique({
       where: { email: where.email.toLowerCase() },
     });
-    console.log("Found user:", user);
     return user ? toAuthDocument(user) : null;
   }
 

@@ -8,8 +8,8 @@ const _config = {
   ACCESS_TOKEN_EXPIRY: process.env.ACCESS_TOKEN_EXPIRY,
   REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET,
   REFRESH_TOKEN_EXPIRY: process.env.REFRESH_TOKEN_EXPIRY,
-  PORT : process.env.PORT,
-  CORS_URL:process.env.CORS_URL,
+  PORT: process.env.PORT,
+  CORS_URL: process.env.CORS_URL,
   DATABASE_URL: process.env.DATABASE_URL
 };
 
