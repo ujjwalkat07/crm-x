@@ -42,7 +42,7 @@ export function LoginForm({
     setLoading(true);
     try {
       await api.post("http://localhost:3001/api/auth/login", { email, password });
-      router.push("/leads");
+      window.location.href = "/leads";
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setError(

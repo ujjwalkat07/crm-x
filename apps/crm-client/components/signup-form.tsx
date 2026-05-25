@@ -47,7 +47,7 @@ export function SignupForm({
     setLoading(true);
     try {
       await api.post("/api/auth/signup", { email, password, fullName });
-      router.push("/leads");
+      window.location.href = "/login";
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setError(

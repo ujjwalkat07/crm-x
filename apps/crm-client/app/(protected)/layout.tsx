@@ -1,10 +1,10 @@
 'use client'
 
-import { AuthProvider, useAuth } from '../../provider/AuthProvider'
+import { useAuth } from '../../provider/AuthProvider'
 import { api } from '@/lib/axios'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   LayoutDashboard,
   Users,
@@ -33,9 +33,27 @@ import axios from 'axios';
 function DashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const router = useRouter()
-  const { user } = useAuth()
+  const { user, isLoading } = useAuth()
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!isLoading && !user) {
+      router.push("/login")
+    }
+  }, [user, isLoading, router])
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Sparkles className="w-10 h-10 animate-pulse text-primary" />
+      </div>
+    )
+  }
+
+  if (!user) {
+    return null
+  }
 
   const userData = (user as any)?.data || user
   const fullName = userData?.fullName || userData?.fullname || "CRM Member"
@@ -284,8 +302,6 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <AuthProvider>
-      <DashboardShell>{children}</DashboardShell>
-    </AuthProvider>
+    <DashboardShell>{children}</DashboardShell>
   )
 }
