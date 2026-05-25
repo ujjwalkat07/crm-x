@@ -9,7 +9,8 @@ const _config = {
   REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET,
   REFRESH_TOKEN_EXPIRY: process.env.REFRESH_TOKEN_EXPIRY,
   PORT : process.env.PORT,
-  CORS_URL:process.env.CORS_URL
+  CORS_URL:process.env.CORS_URL,
+  DATABASE_URL: process.env.DATABASE_URL
 };
 
 export const config = Object.freeze(_config);

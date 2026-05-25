@@ -155,6 +155,7 @@ const userLogin = async (
         ),
       );
   } catch (error) {
+    console.error("Login error:", error);
     //we can check if error is instance of ApiError
     //we use oops concept to handle the error
     if (error instanceof ApiErrorHandling) {

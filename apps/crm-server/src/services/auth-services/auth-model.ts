@@ -1,4 +1,4 @@
-import { getPrisma } from "../../lib/prisma";
+import { prisma } from "../../lib/prisma";
 import {
   accessTokenJwtSign,
   refreshTokenJwtSign,
@@ -76,11 +76,10 @@ export const sanitizeAuthUser = (
 
 export class Auth {
   static async findOne(where: { email: string }) {
-    const prisma = getPrisma();
     const user = await prisma.user.findUnique({
       where: { email: where.email.toLowerCase() },
     });
-
+    console.log("Found user:", user);
     return user ? toAuthDocument(user) : null;
   }
 
@@ -89,7 +88,6 @@ export class Auth {
     email: string;
     password: string;
   }) {
-    const prisma = getPrisma();
     const hashedPassword = await hashPassword(data.password, 10);
     const user = await prisma.user.create({
       data: {
@@ -103,7 +101,6 @@ export class Auth {
   }
 
   static async findById(id: string) {
-    const prisma = getPrisma();
     const user = await prisma.user.findUnique({
       where: { id },
     });
@@ -112,7 +109,6 @@ export class Auth {
   }
 
   static async findPublicById(id: string) {
-    const prisma = getPrisma();
     const user = await prisma.user.findUnique({
       where: { id },
       omit: {
@@ -134,7 +130,6 @@ export class Auth {
   }
 
   static async updateRefreshToken(id: string, refreshToken: string) {
-    const prisma = getPrisma();
     const user = await prisma.user.update({
       where: { id },
       data: { refreshToken },
@@ -144,7 +139,6 @@ export class Auth {
   }
 
   static async clearRefreshToken(id: string) {
-    const prisma = getPrisma();
     const user = await prisma.user.update({
       where: { id },
       data: { refreshToken: null },

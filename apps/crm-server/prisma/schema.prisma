@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
@@ -26,8 +21,6 @@ model User {
 
 model Lead {
   id               String     @id @default(uuid())
-  assignedToId     String?
-  assignedTo       User?      @relation("AssignedLeads", fields: [assignedToId], references: [id])
   customerName     String
   email            String?
   phone            String?
@@ -38,9 +31,23 @@ model Lead {
   notes            String?
   lastContactDate  DateTime?
   nextFollowUpDate DateTime?
-  callLogs         CallLog[]
   createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt
+  assignedToId     String?
+  callLogs         CallLog[]
+  assignedTo       User?      @relation("AssignedLeads", fields: [assignedToId], references: [id])
+}
+
+model CallLog {
+  id       String     @id @default(uuid())
+  leadId   String
+  userId   String
+  status   CallStatus
+  duration Int?
+  notes    String?
+  calledAt DateTime   @default(now())
+  lead     Lead       @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  user     User       @relation(fields: [userId], references: [id])
 }
 
 enum LeadStatus {
@@ -54,18 +61,6 @@ enum Priority {
   HIGH
   MEDIUM
   LOW
-}
-
-model CallLog {
-  id       String     @id @default(uuid())
-  leadId   String
-  lead     Lead       @relation(fields: [leadId], references: [id], onDelete: Cascade)
-  userId   String
-  user     User       @relation(fields: [userId], references: [id])
-  status   CallStatus
-  duration Int? // seconds
-  notes    String?
-  calledAt DateTime   @default(now())
 }
 
 enum CallStatus {
