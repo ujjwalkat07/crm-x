@@ -81,7 +81,7 @@ export function DataTable<TData, TValue>({
     } as unknown as TData
 
     setLocalData(prev => [newLead, ...prev])
-    
+
     // reset form
     setName('')
     setEmail('')
@@ -101,7 +101,6 @@ export function DataTable<TData, TValue>({
       columnFilters,
       columnVisibility
     },
-
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
@@ -362,11 +361,10 @@ export function DataTable<TData, TValue>({
                       key={p}
                       type="button"
                       onClick={() => setPriority(p)}
-                      className={`px-3 py-2 rounded-md text-xs font-medium border transition-all ${
-                        priority === p
+                      className={`px-3 py-2 rounded-md text-xs font-medium border transition-all ${priority === p
                           ? 'bg-primary text-primary-foreground border-primary shadow-xs'
                           : 'bg-background hover:bg-muted text-muted-foreground border-border'
-                      }`}
+                        }`}
                     >
                       {p}
                     </button>
@@ -382,11 +380,10 @@ export function DataTable<TData, TValue>({
                       key={s}
                       type="button"
                       onClick={() => setStatus(s)}
-                      className={`px-3 py-1.5 rounded-md text-xs font-medium border transition-all ${
-                        status === s
+                      className={`px-3 py-1.5 rounded-md text-xs font-medium border transition-all ${status === s
                           ? 'bg-primary text-primary-foreground border-primary shadow-xs'
                           : 'bg-background hover:bg-muted text-muted-foreground border-border'
-                      }`}
+                        }`}
                     >
                       {s}
                     </button>
