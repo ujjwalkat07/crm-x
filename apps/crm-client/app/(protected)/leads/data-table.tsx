@@ -276,8 +276,8 @@ export function DataTable<TData, TValue>({
     <>
       {/* Filters */}
 
-      <div className='flex items-center justify-between mx-16'>
-        <div className='flex items-center gap-3'>
+      <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4'>
+        <div className='flex flex-wrap items-center gap-3'>
           <div className='flex items-center border rounded-md px-2 bg-background shadow-xs'>
             <Input
               placeholder='Search by name, email, phone, status, company...'
@@ -398,7 +398,7 @@ export function DataTable<TData, TValue>({
       </div>
 
       {/* Table */}
-      <div className='rounded-md border mx-16 mt-3 bg-gray-50 shadow-sm'>
+      <div className='rounded-xl border border-border mt-4 bg-card shadow-xs overflow-hidden'>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
@@ -450,7 +450,7 @@ export function DataTable<TData, TValue>({
       </div>
 
       {/* Pagination */}
-      <div className='flex items-center justify-end space-x-2 py-4 mx-16'>
+      <div className='flex items-center justify-end space-x-2 py-4'>
         <Button
           variant='outline'
           size='sm'
