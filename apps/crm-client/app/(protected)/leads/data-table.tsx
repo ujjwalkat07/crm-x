@@ -573,7 +573,7 @@ export function DataTable<TData, TValue>({
               <Field>
                 <FieldLabel>Status</FieldLabel>
                 <div className="grid grid-cols-3 gap-2">
-                  {['Lead', 'Contacted', 'Qualified', 'Proposal', 'Won', 'Lost'].map(s => (
+                  {['Open', 'Active', 'Closed', 'Lost'].map(s => (
                     <button
                       key={s}
                       type="button"
