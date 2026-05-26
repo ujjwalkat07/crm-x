@@ -8,5 +8,5 @@ allowBuilds:
   "esbuild": true
   "msw": true
   "prisma": true
+  protobufjs: set this to true or false
   "sharp": true
-
