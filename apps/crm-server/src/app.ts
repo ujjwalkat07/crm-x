@@ -4,16 +4,17 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import { authRoutes } from "./services/auth-services/auth-routes";
 import { leadRoutes } from "./services/crm-upload/upload-routes";
+import { config } from "./config/env-config/config";
 
 dotenv.config();
 
 const app: Express = express();
-const allowedOrigins = ["http://localhost:3000"]
+const allowedOrigins = ["http://localhost:3000",`${config.CORS_URL}`]
 
 app.use(cors({
-    origin: allowedOrigins,
-    credentials: true,
-  }),
+  origin: allowedOrigins,
+  credentials: true,
+}),
 );
 
 app.use(express.json());
