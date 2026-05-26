@@ -41,7 +41,7 @@ export function LoginForm({
     setError("");
     setLoading(true);
     try {
-      await api.post("http://localhost:3001/api/auth/login", { email, password });
+      await api.post("/api/auth/login", { email, password });
       window.location.href = "/leads";
     } catch (error) {
       if (axios.isAxiosError(error)) {
