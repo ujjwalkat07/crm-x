@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 import {
   ColumnDef,
@@ -30,14 +30,17 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuLabel,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
+  DropdownMenuItem,
+  DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { CircleFadingPlus, CircleStop, Search, Tags, Plus, X, Trash2, SlidersHorizontal } from 'lucide-react';
+import { CircleFadingPlus, CircleStop, Search, Tags, Plus, X, Trash2, SlidersHorizontal, Download, Upload, Loader2 } from 'lucide-react';
 import { Field, FieldLabel } from '@/components/ui/field'
 import { api } from '@/lib/axios'
+import { exportLeadsToCsv, parseCsvText } from '@/lib/csv'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -62,6 +65,8 @@ export function DataTable<TData, TValue>({
   const [priority, setPriority] = useState('Medium')
   const [status, setStatus] = useState('Lead')
   const [tags, setTags] = useState('')
+  const [isImporting, setIsImporting] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     const fetchLeads = async () => {
@@ -224,6 +229,115 @@ export function DataTable<TData, TValue>({
     }
   }
 
+  const handleImportCsv = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsImporting(true);
+    const reader = new FileReader();
+
+    reader.onload = async (event) => {
+      const csvText = event.target?.result as string;
+      if (!csvText) {
+        setIsImporting(false);
+        alert("Failed to read CSV file content.");
+        return;
+      }
+
+      try {
+        const parsedRows = parseCsvText(csvText);
+        if (parsedRows.length === 0) {
+          alert("The uploaded CSV file appears to be empty or has an invalid structure.");
+          setIsImporting(false);
+          return;
+        }
+
+        const successLeads: any[] = [];
+        let skippedCount = 0;
+
+        for (const row of parsedRows) {
+          const customerName = row.name;
+          const email = row.email;
+
+          // Required fields validation
+          if (!customerName || !email) {
+            skippedCount++;
+            continue;
+          }
+
+          // Normalize priority
+          let priorityVal: "LOW" | "MEDIUM" | "HIGH" = "MEDIUM";
+          if (row.priority) {
+            const p = String(row.priority).toUpperCase();
+            if (p === 'LOW' || p === 'MEDIUM' || p === 'HIGH') {
+              priorityVal = p as any;
+            }
+          }
+
+          // Normalize status
+          let statusVal: "Open" | "Active" | "Closed" | "Lost" = "Open";
+          if (row.status) {
+            const s = String(row.status).toLowerCase();
+            if (s === 'open' || s === 'lead') statusVal = 'Open';
+            else if (s === 'active') statusVal = 'Active';
+            else if (s === 'closed') statusVal = 'Closed';
+            else if (s === 'lost') statusVal = 'Lost';
+          }
+
+          const response = await api.post("/api/leads", {
+            customerName,
+            email,
+            phone: row.phone || null,
+            company: row.company || null,
+            priority: priorityVal,
+            status: statusVal,
+            tags: Array.isArray(row.tags) ? row.tags : [],
+            notes: row.notes || "",
+            lastContactDate: row.lastSeen || new Date().toISOString(),
+            nextFollowUpDate: row['next date'] || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+          });
+
+          const createdLead = response.data.lead || response.data.data;
+          const mappedLead = {
+            id: createdLead.id,
+            name: createdLead.customerName,
+            email: createdLead.email || "-",
+            emaiL: createdLead.email || "-",
+            phone: createdLead.phone || "-",
+            company: createdLead.company || "-",
+            priority: createdLead.priority ? createdLead.priority.toLowerCase() : "medium",
+            tags: createdLead.tags || [],
+            status: createdLead.status || "Open",
+            lastSeen: createdLead.lastContactDate || new Date().toISOString(),
+            'next date': createdLead.nextFollowUpDate || new Date().toISOString(),
+            image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=60'
+          };
+          successLeads.push(mappedLead);
+        }
+
+        if (successLeads.length > 0) {
+          setLocalData(prev => [...successLeads, ...prev]);
+          alert(`Successfully imported ${successLeads.length} leads.${skippedCount > 0 ? ` Skipped ${skippedCount} invalid rows.` : ''}`);
+        } else {
+          alert(`No leads were imported. Skipped ${skippedCount} invalid rows.`);
+        }
+      } catch (err) {
+        alert("An error occurred while importing leads.");
+      } finally {
+        setIsImporting(false);
+        // Clear value so the same file can be imported again if needed
+        e.target.value = '';
+      }
+    };
+
+    reader.onerror = () => {
+      alert("Failed to read CSV file.");
+      setIsImporting(false);
+    };
+
+    reader.readAsText(file);
+  };
+
   const table = useReactTable({
     data: localData,
     columns,
@@ -299,6 +413,77 @@ export function DataTable<TData, TValue>({
             <Plus className="w-4 h-4" />
             Add Lead
           </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant='outline' className="flex items-center gap-1.5 active:scale-95 transition-all text-xs font-semibold">
+                <Download className="w-4 h-4 text-muted-foreground" />
+                Export
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48 bg-card border border-border shadow-md rounded-md p-1">
+              <DropdownMenuLabel className="text-[10px] font-bold text-muted-foreground/80 uppercase px-2 py-1.5">Export Data</DropdownMenuLabel>
+              {table.getFilteredSelectedRowModel().rows.length > 0 && (
+                <>
+                  <DropdownMenuItem
+                    className="cursor-pointer font-medium text-xs flex items-center justify-between px-2 py-1.5 rounded-md hover:bg-muted focus:bg-muted transition-colors"
+                    onClick={() => {
+                      const selectedData = table.getFilteredSelectedRowModel().rows.map(row => row.original);
+                      exportLeadsToCsv(selectedData as any[], 'selected_leads.csv');
+                    }}
+                  >
+                    <span>Selected Leads</span>
+                    <span className="bg-primary/10 text-primary px-1.5 py-0.5 rounded-full text-[10px] font-bold">
+                      {table.getFilteredSelectedRowModel().rows.length}
+                    </span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="my-1 border-b border-border/50" />
+                </>
+              )}
+              <DropdownMenuItem
+                className="cursor-pointer font-medium text-xs flex items-center justify-between px-2 py-1.5 rounded-md hover:bg-muted focus:bg-muted transition-colors"
+                onClick={() => {
+                  const filteredData = table.getFilteredRowModel().rows.map(row => row.original);
+                  exportLeadsToCsv(filteredData as any[], 'filtered_leads.csv');
+                }}
+              >
+                <span>Filtered Leads</span>
+                <span className="bg-muted-foreground/10 text-muted-foreground px-1.5 py-0.5 rounded-full text-[10px] font-bold">
+                  {table.getFilteredRowModel().rows.length}
+                </span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="cursor-pointer font-medium text-xs flex items-center justify-between px-2 py-1.5 rounded-md hover:bg-muted focus:bg-muted transition-colors"
+                onClick={() => {
+                  exportLeadsToCsv(localData as any[], 'all_leads.csv');
+                }}
+              >
+                <span>All Leads</span>
+                <span className="bg-muted-foreground/10 text-muted-foreground px-1.5 py-0.5 rounded-full text-[10px] font-bold">
+                  {localDataArray.length}
+                </span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Button
+            variant='outline'
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isImporting}
+            className="flex items-center gap-1.5 active:scale-95 transition-all text-xs font-semibold"
+          >
+            {isImporting ? (
+              <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+            ) : (
+              <Upload className="w-4 h-4 text-muted-foreground" />
+            )}
+            {isImporting ? 'Importing...' : 'Import'}
+          </Button>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleImportCsv}
+            accept=".csv"
+            className="hidden"
+          />
           {table.getFilteredSelectedRowModel().rows.length > 0 && (
             <Button
               variant="destructive"
