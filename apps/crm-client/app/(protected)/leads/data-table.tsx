@@ -400,31 +400,137 @@ export function DataTable<TData, TValue>({
     <>
       {/* Filters */}
 
-      <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4'>
-        <div className='flex flex-wrap items-center gap-3'>
-          <div className='flex items-center border rounded-md px-2 bg-background shadow-xs'>
-            <Input
-              placeholder='Search by name, email, phone, status, company...'
-              value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-              onChange={event =>
-                table.getColumn('name')?.setFilterValue(event.target.value)
-              }
-              className='max-w-xl w-96 border-none focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none'
-            />
-            <Search className="text-muted-foreground w-4 h-4 mr-1" />
+      <div className='flex flex-col lg:flex-row lg:items-end justify-between gap-4 mt-2'>
+        {/* Left Side: Search & Filters */}
+        <div className='flex flex-wrap items-end gap-3 flex-1 min-w-0'>
+          {/* Search Input */}
+          <div className='flex flex-col gap-1 w-full md:w-auto'>
+            <span className="text-[10px] font-bold text-muted-foreground/80 uppercase">Search Leads</span>
+            <div className='flex items-center border rounded-md px-2 bg-background shadow-xs w-full md:w-80 h-9'>
+              <Input
+                placeholder='Search by name, email, phone, status...'
+                value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
+                onChange={event =>
+                  table.getColumn('name')?.setFilterValue(event.target.value)
+                }
+                className='w-full border-none focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none text-xs'
+              />
+              <Search className="text-muted-foreground w-4 h-4 mr-1 shrink-0" />
+            </div>
           </div>
-          <Button onClick={() => setIsAddModalOpen(true)} className="flex items-center gap-1.5 active:scale-95 transition-all">
+
+          {/* Filters (Status, Priority, Tags) */}
+          <div className="flex flex-wrap items-center gap-2">
+            <DropdownMenu>
+              <div className="flex flex-col gap-1">
+                <DropdownMenuLabel className="text-[10px] font-bold text-muted-foreground/80 uppercase p-0">Status</DropdownMenuLabel>
+                <DropdownMenuTrigger asChild>
+                  <Button variant='outline' className='w-32 h-9 justify-between active:scale-98 transition-all capitalize text-xs font-semibold'>
+                    <span className="flex items-center gap-1.5 truncate">
+                      <CircleStop className='w-3.5 h-3.5 text-foreground opacity-75' />
+                      {statusFilter || "All Status"}
+                    </span>
+                  </Button>
+                </DropdownMenuTrigger>
+              </div>
+              <DropdownMenuContent align='start' className="w-40">
+                {['All Status', 'Open', 'Active', 'Closed', 'Lost'].map(item => (
+                  <DropdownMenuCheckboxItem
+                    key={item}
+                    className='capitalize cursor-pointer text-xs'
+                    checked={item === 'All Status' ? !statusFilter : statusFilter === item}
+                    onCheckedChange={() => {
+                      table.getColumn('status')?.setFilterValue(item === 'All Status' ? undefined : item)
+                    }}
+                  >
+                    {item}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <DropdownMenu>
+              <div className="flex flex-col gap-1">
+                <DropdownMenuLabel className="text-[10px] font-bold text-muted-foreground/80 uppercase p-0">Priority</DropdownMenuLabel>
+                <DropdownMenuTrigger asChild>
+                  <Button variant='outline' className='w-32 h-9 justify-between active:scale-98 transition-all capitalize text-xs font-semibold'>
+                    <span className="flex items-center gap-1.5 truncate">
+                      <CircleFadingPlus className='w-3.5 h-3.5 text-foreground opacity-75' />
+                      {priorityFilter ? (priorityFilter.charAt(0).toUpperCase() + priorityFilter.slice(1)) : "All Priority"}
+                    </span>
+                  </Button>
+                </DropdownMenuTrigger>
+              </div>
+              <DropdownMenuContent align='start' className="w-40">
+                {['All Priority', 'Low', 'Medium', 'High'].map(item => (
+                  <DropdownMenuCheckboxItem
+                    key={item}
+                    className='capitalize cursor-pointer text-xs'
+                    checked={item === 'All Priority' ? !priorityFilter : priorityFilter === item.toLowerCase()}
+                    onCheckedChange={() => {
+                      table.getColumn('priority')?.setFilterValue(item === 'All Priority' ? undefined : item.toLowerCase())
+                    }}
+                  >
+                    {item}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <DropdownMenu>
+              <div className="flex flex-col gap-1">
+                <DropdownMenuLabel className="text-[10px] font-bold text-muted-foreground/80 uppercase p-0">Tags</DropdownMenuLabel>
+                <DropdownMenuTrigger asChild>
+                  <Button variant='outline' className='w-32 h-9 justify-between active:scale-98 transition-all capitalize text-xs font-semibold'>
+                    <span className="flex items-center gap-1.5 truncate">
+                      <Tags className='w-3.5 h-3.5 text-foreground opacity-75' />
+                      {tagsFilter || "All Tags"}
+                    </span>
+                  </Button>
+                </DropdownMenuTrigger>
+              </div>
+              <DropdownMenuContent align='start' className="w-44 max-h-56 overflow-y-auto">
+                <DropdownMenuCheckboxItem
+                  className='capitalize cursor-pointer text-xs'
+                  checked={!tagsFilter}
+                  onCheckedChange={() => {
+                    table.getColumn('tags')?.setFilterValue(undefined)
+                  }}
+                >
+                  All Tags
+                </DropdownMenuCheckboxItem>
+                {allUniqueTags.map(item => (
+                  <DropdownMenuCheckboxItem
+                    key={item}
+                    className='capitalize cursor-pointer text-xs'
+                    checked={tagsFilter === item}
+                    onCheckedChange={() => {
+                      table.getColumn('tags')?.setFilterValue(tagsFilter === item ? undefined : item)
+                    }}
+                  >
+                    {item}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+
+        {/* Right Side: Action Buttons */}
+        <div className='flex flex-wrap items-center gap-2 shrink-0 md:pt-4 lg:pt-0'>
+          <Button onClick={() => setIsAddModalOpen(true)} className="flex items-center gap-1.5 h-9 text-xs font-semibold active:scale-95 transition-all">
             <Plus className="w-4 h-4" />
             Add Lead
           </Button>
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant='outline' className="flex items-center gap-1.5 active:scale-95 transition-all text-xs font-semibold">
+              <Button variant='outline' className="flex items-center gap-1.5 h-9 active:scale-95 transition-all text-xs font-semibold">
                 <Download className="w-4 h-4 text-muted-foreground" />
                 Export
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48 bg-card border border-border shadow-md rounded-md p-1">
+            <DropdownMenuContent align="end" className="w-48 bg-card border border-border shadow-md rounded-md p-1">
               <DropdownMenuLabel className="text-[10px] font-bold text-muted-foreground/80 uppercase px-2 py-1.5">Export Data</DropdownMenuLabel>
               {table.getFilteredSelectedRowModel().rows.length > 0 && (
                 <>
@@ -447,6 +553,10 @@ export function DataTable<TData, TValue>({
                 className="cursor-pointer font-medium text-xs flex items-center justify-between px-2 py-1.5 rounded-md hover:bg-muted focus:bg-muted transition-colors"
                 onClick={() => {
                   const filteredData = table.getFilteredRowModel().rows.map(row => row.original);
+                  if (filteredData.length === 0) {
+                    toast.error("No lead data available to export.");
+                    return;
+                  }
                   exportLeadsToCsv(filteredData as any[], 'filtered_leads.csv');
                 }}
               >
@@ -458,6 +568,10 @@ export function DataTable<TData, TValue>({
               <DropdownMenuItem
                 className="cursor-pointer font-medium text-xs flex items-center justify-between px-2 py-1.5 rounded-md hover:bg-muted focus:bg-muted transition-colors"
                 onClick={() => {
+                  if (localDataArray.length === 0) {
+                    toast.error("No lead data available to export.");
+                    return;
+                  }
                   exportLeadsToCsv(localData as any[], 'all_leads.csv');
                 }}
               >
@@ -468,11 +582,12 @@ export function DataTable<TData, TValue>({
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
           <Button
             variant='outline'
             onClick={() => fileInputRef.current?.click()}
             disabled={isImporting}
-            className="flex items-center gap-1.5 active:scale-95 transition-all text-xs font-semibold"
+            className="flex items-center gap-1.5 h-9 active:scale-95 transition-all text-xs font-semibold"
           >
             {isImporting ? (
               <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
@@ -488,117 +603,17 @@ export function DataTable<TData, TValue>({
             accept=".csv"
             className="hidden"
           />
+
           {table.getFilteredSelectedRowModel().rows.length > 0 && (
             <Button
               variant="destructive"
               onClick={handleDeleteSelected}
-              className="flex items-center gap-1.5 active:scale-95 transition-all animate-in fade-in slide-in-from-left-2 duration-200"
+              className="flex items-center gap-1.5 h-9 active:scale-95 transition-all animate-in fade-in slide-in-from-left-2 duration-200"
             >
               <Trash2 className="w-4 h-4" />
               Delete Selected ({table.getFilteredSelectedRowModel().rows.length})
             </Button>
           )}
-        </div>
-
-        {/* Column visibility and filtering */}
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground mr-1.5 uppercase tracking-wider">
-            <SlidersHorizontal className="w-3.5 h-3.5" />
-            <span>Filter</span>
-          </div>
-
-          <DropdownMenu>
-            <div className="flex flex-col">
-              <DropdownMenuLabel className="text-[10px] font-bold text-muted-foreground/80 uppercase pb-1">Status</DropdownMenuLabel>
-              <DropdownMenuTrigger asChild>
-                <Button variant='outline' className='w-32 justify-between active:scale-98 transition-all capitalize text-xs font-semibold'>
-                  <span className="flex items-center gap-1.5 truncate">
-                    <CircleStop className='w-3.5 h-3.5 text-foreground opacity-75' />
-                    {statusFilter || "All Status"}
-                  </span>
-                </Button>
-              </DropdownMenuTrigger>
-            </div>
-            <DropdownMenuContent align='end' className="w-40">
-              {['All Status', 'Open', 'Active', 'Closed', 'Lost'].map(item => (
-                <DropdownMenuCheckboxItem
-                  key={item}
-                  className='capitalize cursor-pointer'
-                  checked={item === 'All Status' ? !statusFilter : statusFilter === item}
-                  onCheckedChange={() => {
-                    table.getColumn('status')?.setFilterValue(item === 'All Status' ? undefined : item)
-                  }}
-                >
-                  {item}
-                </DropdownMenuCheckboxItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <DropdownMenu>
-            <div className="flex flex-col">
-              <DropdownMenuLabel className="text-[10px] font-bold text-muted-foreground/80 uppercase pb-1">Priority</DropdownMenuLabel>
-              <DropdownMenuTrigger asChild>
-                <Button variant='outline' className='w-32 justify-between active:scale-98 transition-all capitalize text-xs font-semibold'>
-                  <span className="flex items-center gap-1.5 truncate">
-                    <CircleFadingPlus className='w-3.5 h-3.5 text-foreground opacity-75' />
-                    {priorityFilter ? (priorityFilter.charAt(0).toUpperCase() + priorityFilter.slice(1)) : "All Priority"}
-                  </span>
-                </Button>
-              </DropdownMenuTrigger>
-            </div>
-            <DropdownMenuContent align='end' className="w-40">
-              {['All Priority', 'Low', 'Medium', 'High'].map(item => (
-                <DropdownMenuCheckboxItem
-                  key={item}
-                  className='capitalize cursor-pointer'
-                  checked={item === 'All Priority' ? !priorityFilter : priorityFilter === item.toLowerCase()}
-                  onCheckedChange={() => {
-                    table.getColumn('priority')?.setFilterValue(item === 'All Priority' ? undefined : item.toLowerCase())
-                  }}
-                >
-                  {item}
-                </DropdownMenuCheckboxItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <DropdownMenu>
-            <div className="flex flex-col">
-              <DropdownMenuLabel className="text-[10px] font-bold text-muted-foreground/80 uppercase pb-1">Tags</DropdownMenuLabel>
-              <DropdownMenuTrigger asChild>
-                <Button variant='outline' className='w-32 justify-between active:scale-98 transition-all capitalize text-xs font-semibold'>
-                  <span className="flex items-center gap-1.5 truncate">
-                    <Tags className='w-3.5 h-3.5 text-foreground opacity-75' />
-                    {tagsFilter || "All Tags"}
-                  </span>
-                </Button>
-              </DropdownMenuTrigger>
-            </div>
-            <DropdownMenuContent align='end' className="w-44 max-h-56 overflow-y-auto">
-              <DropdownMenuCheckboxItem
-                className='capitalize cursor-pointer'
-                checked={!tagsFilter}
-                onCheckedChange={() => {
-                  table.getColumn('tags')?.setFilterValue(undefined)
-                }}
-              >
-                All Tags
-              </DropdownMenuCheckboxItem>
-              {allUniqueTags.map(item => (
-                <DropdownMenuCheckboxItem
-                  key={item}
-                  className='capitalize cursor-pointer'
-                  checked={tagsFilter === item}
-                  onCheckedChange={() => {
-                    table.getColumn('tags')?.setFilterValue(tagsFilter === item ? undefined : item)
-                  }}
-                >
-                  {item}
-                </DropdownMenuCheckboxItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
         </div>
       </div>
 

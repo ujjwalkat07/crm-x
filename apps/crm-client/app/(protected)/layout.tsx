@@ -15,6 +15,8 @@ import {
   Bell,
   User,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Sparkles,
   Menu,
   X
@@ -35,7 +37,21 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const { user, isLoading } = useAuth()
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const saved = localStorage.getItem('sidebar-collapsed')
+    if (saved !== null) {
+      setIsSidebarCollapsed(saved === 'true')
+    }
+  }, [])
+
+  const toggleSidebar = () => {
+    const nextState = !isSidebarCollapsed
+    setIsSidebarCollapsed(nextState)
+    localStorage.setItem('sidebar-collapsed', String(nextState))
+  }
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -93,19 +109,36 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-muted/10 text-foreground flex">
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex flex-col w-64 bg-card border-r border-border h-screen fixed left-0 top-0 z-30">
+      <aside className={`hidden md:flex flex-col ${isSidebarCollapsed ? 'w-20' : 'w-64'} bg-card border-r border-border h-screen fixed left-0 top-0 z-30 transition-all duration-300`}>
         {/* Brand */}
-        <div className="h-16 flex items-center gap-2.5 px-6 border-b border-border">
-          <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-primary-foreground shadow-xs">
-            <Sparkles className="w-5 h-5 animate-pulse" />
+        <div className={`h-16 flex items-center ${isSidebarCollapsed ? 'justify-center px-2' : 'justify-between px-6'} border-b border-border`}>
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-primary-foreground shadow-xs shrink-0">
+              <Sparkles className="w-5 h-5 animate-pulse" />
+            </div>
+            {!isSidebarCollapsed && (
+              <span className="font-bold text-xl tracking-tight bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent truncate animate-in fade-in duration-200">
+                CRM-X
+              </span>
+            )}
           </div>
-          <span className="font-bold text-xl tracking-tight bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
-            CRM-X
-          </span>
+          <Button
+            variant="ghost"
+            size="icon-xs"
+            onClick={toggleSidebar}
+            className="hidden md:flex text-muted-foreground hover:text-foreground cursor-pointer rounded-md p-1 hover:bg-muted shrink-0"
+            title={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {isSidebarCollapsed ? (
+              <ChevronRight className="w-4 h-4" />
+            ) : (
+              <ChevronLeft className="w-4 h-4" />
+            )}
+          </Button>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
+        <nav className="flex-1 px-3 py-6 space-y-1.5 overflow-y-auto">
           {navLinks.map((link) => {
             const Icon = link.icon
             const isActive = pathname === link.href
@@ -114,45 +147,63 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
               <Link
                 key={link.name}
                 href={link.disabled ? '#' : link.href}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${link.disabled
+                className={`flex items-center ${isSidebarCollapsed ? 'justify-center px-2 py-3' : 'gap-3 px-3 py-2.5'} rounded-lg text-sm font-medium transition-all ${link.disabled
                     ? 'opacity-40 cursor-not-allowed hover:bg-transparent'
                     : isActive
                       ? 'bg-primary text-primary-foreground shadow-xs shadow-primary/10'
                       : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                   }`}
                 onClick={(e) => link.disabled && e.preventDefault()}
+                title={isSidebarCollapsed ? link.name : undefined}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-primary-foreground' : 'text-muted-foreground'}`} />
-                {link.name}
+                <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-primary-foreground' : 'text-muted-foreground'}`} />
+                {!isSidebarCollapsed && (
+                  <span className="truncate animate-in fade-in duration-200">{link.name}</span>
+                )}
               </Link>
             )
           })}
         </nav>
 
         {/* Footer Profile */}
-        <div className="p-4 border-t border-border bg-muted/30">
-          <div className="flex items-center gap-3">
-            <div className="relative w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center font-semibold text-primary text-sm shadow-inner">
+        <div className="p-4 border-t border-border bg-muted/30 transition-all duration-300">
+          <div className={`flex ${isSidebarCollapsed ? 'flex-col items-center gap-4' : 'items-center gap-3'}`}>
+            <div className="relative w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center font-semibold text-primary text-sm shadow-inner shrink-0">
               {initials}
               <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-card animate-pulse" />
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold truncate text-foreground leading-tight">
-                {fullName}
-              </p>
-              <p className="text-xs text-muted-foreground truncate leading-tight mt-0.5">
-                {email}
-              </p>
-            </div>
-            <Button
-              variant="ghost"
-              size="icon-xs"
-              onClick={handleLogout}
-              className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 cursor-pointer"
-              title="Logout"
-            >
-              <LogOut className="w-4 h-4" />
-            </Button>
+            
+            {!isSidebarCollapsed ? (
+              <>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold truncate text-foreground leading-tight">
+                    {fullName}
+                  </p>
+                  <p className="text-xs text-muted-foreground truncate leading-tight mt-0.5">
+                    {email}
+                  </p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon-xs"
+                  onClick={handleLogout}
+                  className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 cursor-pointer shrink-0"
+                  title="Logout"
+                >
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              </>
+            ) : (
+              <Button
+                variant="ghost"
+                size="icon-xs"
+                onClick={handleLogout}
+                className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 cursor-pointer shrink-0 p-1.5 rounded-md hover:bg-muted"
+                title="Logout"
+              >
+                <LogOut className="w-4 h-4" />
+              </Button>
+            )}
           </div>
         </div>
       </aside>
@@ -223,7 +274,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
       )}
 
       {/* Main Wrapper */}
-      <div className="flex-1 flex flex-col md:pl-64 min-w-0">
+      <div className={`flex-1 flex flex-col ${isSidebarCollapsed ? 'md:pl-20' : 'md:pl-64'} min-w-0 transition-all duration-300`}>
         {/* Top Header */}
         <header className="h-16 border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-20 flex items-center justify-between px-6 md:px-8 shadow-xs">
           <div className="flex items-center gap-4">
