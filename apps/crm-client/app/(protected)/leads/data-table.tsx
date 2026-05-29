@@ -41,6 +41,8 @@ import { Field, FieldLabel } from '@/components/ui/field'
 import { api } from '@/lib/axios'
 import { exportLeadsToCsv, parseCsvText } from '@/lib/csv'
 import { toast } from 'react-toastify'
+import axios from 'axios'
+import { ConfirmModal } from '@/components/ui/confirm-modal'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -55,7 +57,7 @@ export function DataTable<TData, TValue>({
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-
+  const [error, setError] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [editingLeadId, setEditingLeadId] = useState<string | null>(null)
   const [name, setName] = useState('')
@@ -66,46 +68,62 @@ export function DataTable<TData, TValue>({
   const [status, setStatus] = useState('Lead')
   const [tags, setTags] = useState('')
   const [isImporting, setIsImporting] = useState(false)
+  const [confirmDeleteSelectedOpen, setConfirmDeleteSelectedOpen] = useState(false)
+  const [leadToDelete, setLeadToDelete] = useState<{ id: string, name: string } | null>(null)
+
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  useEffect(() => {
-    const fetchLeads = async () => {
-      try {
-        const response = await api.get("/api/leads")
-        const fetchedData = response.data.data || response.data
+  const fetchLeads = async () => {
+    try {
+      const response = await api.get("/api/leads")
+      const fetchedData = response.data.data || response.data
 
-        // Map backend Lead to frontend User structure
-        const mappedLeads = fetchedData.map((lead: any) => ({
-          id: lead.id,
-          name: lead.customerName,
-          email: lead.email || "-",
-          emaiL: lead.email || "-",
-          phone: lead.phone || "-",
-          company: lead.company || "-",
-          priority: lead.priority ? lead.priority.toLowerCase() : "medium",
-          tags: lead.tags || [],
-          status: lead.status || "Open",
-          lastSeen: lead.lastContactDate || new Date().toISOString(),
-          'next date': lead.nextFollowUpDate || new Date().toISOString(),
-        }))
-        setLocalData(mappedLeads)
-      } catch (err) {
+      // Map backend Lead to frontend User structure
+      const mappedLeads = fetchedData.map((lead: any) => ({
+        id: lead.id,
+        name: lead.customerName,
+        email: lead.email || "-",
+        phone: lead.phone || "-",
+        company: lead.company || "-",
+        priority: lead.priority ? lead.priority.toLowerCase() : "medium",
+        tags: lead.tags || [],
+        status: lead.status || "Open",
+        lastSeen: lead.lastContactDate || new Date().toISOString(),
+        nextFollowUp: lead.nextFollowUpDate || new Date().toISOString(),
+      }))
+      console.log(fetchedData)
+      setLocalData(mappedLeads)
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        setError(
+          err.response?.data?.message || "Login failed. Please try again.",
+        );
+      } else {
+        setError("Something went wrong. Please try again.");
       }
     }
+  }
+  
+  useEffect(() => {
     fetchLeads()
-  }, [])
+  }, [fetchLeads])
 
-  const handleDeleteSelected = async () => {
+  //for popup
+  const handleDeleteSelected = () => {
+    const selectedRows = table.getFilteredSelectedRowModel().rows
+    if (selectedRows.length === 0) return
+    setConfirmDeleteSelectedOpen(true)
+  }
+
+  const executeDeleteSelected = async () => {
     const selectedRows = table.getFilteredSelectedRowModel().rows
     if (selectedRows.length === 0) return
 
-    const confirmMsg = `Are you sure you want to delete the ${selectedRows.length} selected lead(s)?`
-    if (!confirm(confirmMsg)) return
-
     try {
-      const idsToDelete = selectedRows.map(row => (row.original as any).id)
+      const idsToDelete = selectedRows.map(row => (row.original as any).id) //ids of the selected fields
+      //bulk delete using promises 
       await Promise.all(idsToDelete.map(id => api.delete(`/api/leads/${id}`)))
-      setLocalData(prev => prev.filter((lead: any) => !idsToDelete.includes(lead.id)))
+      await fetchLeads()  // refetch leads
       table.resetRowSelection()
       toast.success("Successfully deleted selected leads.")
     } catch (err) {
@@ -156,8 +174,6 @@ export function DataTable<TData, TValue>({
         tags: createdLead.tags || [],
         status: createdLead.status || "Open",
         lastSeen: createdLead.lastContactDate || new Date().toISOString(),
-        'next date': createdLead.nextFollowUpDate || new Date().toISOString(),
-        image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=60'
       } as unknown as TData
 
       setLocalData(prev => [mappedLead, ...prev])
@@ -351,6 +367,9 @@ export function DataTable<TData, TValue>({
     meta: {
       editLead: (lead: any) => {
         openEditModal(lead)
+      },
+      confirmDeleteLead: (id: string, name: string) => {
+        setLeadToDelete({ id, name })
       },
       deleteLead: async (id: string) => {
         try {
@@ -824,6 +843,36 @@ export function DataTable<TData, TValue>({
           </div>
         </div>
       )}
+
+      {/* Custom Confirm Modals */}
+      <ConfirmModal
+        isOpen={confirmDeleteSelectedOpen}
+        title="Delete Selected Leads"
+        message={`Are you sure you want to delete the ${table.getFilteredSelectedRowModel().rows.length} selected lead(s)? This action cannot be undone.`}
+        confirmText="Delete Leads"
+        onConfirm={async () => {
+          setConfirmDeleteSelectedOpen(false)
+          await executeDeleteSelected()
+        }}
+        onCancel={() => setConfirmDeleteSelectedOpen(false)}
+      />
+
+      <ConfirmModal
+        isOpen={!!leadToDelete}
+        title="Delete Lead"
+        message={`Are you sure you want to delete the lead for "${leadToDelete?.name || ''}"? This action cannot be undone.`}
+        confirmText="Delete Lead"
+        onConfirm={async () => {
+          if (leadToDelete) {
+            const deleteFn = (table.options.meta as any)?.deleteLead
+            if (deleteFn) {
+              await deleteFn(leadToDelete.id)
+            }
+            setLeadToDelete(null)
+          }
+        }}
+        onCancel={() => setLeadToDelete(null)}
+      />
     </>
   )
 }

@@ -318,9 +318,7 @@ export const columns: ColumnDef<User>[] = [
             size="icon-xs"
             className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 p-1.5 rounded-md cursor-pointer transition-colors shrink-0"
             onClick={() => {
-              if (confirm("Are you sure you want to delete this lead?")) {
-                (table.options.meta as any)?.deleteLead(user.id)
-              }
+              (table.options.meta as any)?.confirmDeleteLead(user.id, user.name)
             }}
             title="Delete Lead"
           >
