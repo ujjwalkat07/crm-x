@@ -1,159 +1,95 @@
-# Turborepo starter
+# CRM-X — Premium Growth & Relationship Management
 
-This Turborepo starter is maintained by the Turborepo core team.
+![CRM-X Banner](image.png)
 
-## Using this example
+## Overview
 
-Run the following command:
+**CRM-X** is a next-generation Customer Relationship Management platform. Engineered as a high-performance monorepo, it combines state-of-the-art Web UI design, client-server decoupling, and advanced automation to streamline sales pipelines, leads tracking, and relationship data integrity.
 
-```sh
-npx create-turbo@latest
-```
+Designed with **rich aesthetics**, the dashboard features beautiful glassmorphism, adaptive dark mode compliance, and precise micro-interactions for a premium CRM experience.
 
-## What's inside?
+---
 
-This Turborepo includes the following packages/apps:
+## 💎 Key Features
 
-### Apps and Packages
+- ⚡ **Turborepo Monorepo Architecture** – Ultra-fast cached builds, type verification, and workspace organization managed via `pnpm` workspaces.
+- 👥 **High-Fidelity Leads Manager** – Advanced data-tables with client-side CSV bulk importing, targeted exports (selected, filtered, or all), pagination, and smart multi-criteria filtering.
+- 📞 **Click-to-Call Direct Dialing** – Instant, styled calling options (`tel:` protocols) embedded directly inside phone cells and primary action toolbars, complete with group hover focus states.
+- 🎨 **Visual Color Badging** – Dynamic color codes matching priority levels (Rose for High, Amber for Medium, Blue for Low) and customized lead status tags (Blue for Open, Emerald for Active, Slate for Closed, Rose for Lost).
+- 🔄 **Auto Database Syncing** – Standalone reactive callback handles (`fetchLeads`) that trigger post-deletion to keep the client application completely synchronized with the server's backend database.
+- 🔔 **Modern Notification Popups** – Direct integration with `react-toastify` for toast success alerts and error popups, replacing default browser actions.
+- 🛡️ **Custom ConfirmModal Overlay** – Elegant custom glassmorphism modal overlays replacing browser-native confirmations for critical destructive actions.
+- 🗂️ **Collapsible Dashboard Sidebar** – A responsive desktop sidebar that dynamically collapses from `w-64` to `w-20` on click, saving its state in `localStorage` to prevent UI shifting during navigation.
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+---
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+## 🛠️ Tech Stack
 
-### Utilities
+### Client (`apps/crm-client`)
+- **Framework**: Next.js 16 (App Router, Client Components)
+- **Styling**: Tailwind CSS & custom glassmorphism systems
+- **Animations**: Framer Motion (staggered listings, springs, and exit animations)
+- **Icons**: Lucide React
+- **Notifications**: React-Toastify
 
-This Turborepo has some additional tools already setup for you:
+### Server (`apps/crm-server`)
+- **Runtime**: Node.js
+- **Framework**: Express API services
+- **Database Utilities**: Custom schema routing
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+### Packages (`packages/*`)
+- **Shared UI**: Custom React element component stubs (`@repo/ui`)
+- **Linter & Configurations**: ESLint and TypeScript configs (`@repo/eslint-config`, `@repo/typescript-config`)
 
-### Build
+---
 
-To build all apps and packages, run the following command:
+## 🚀 Getting Started
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+### Prerequisites
 
-```sh
-cd my-turborepo
-turbo build
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo build
-pnpm dlx turbo build
-pnpm exec turbo build
-```
-
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+Ensure you have **Node.js >= 18** and **pnpm** installed globally:
 
 ```sh
-turbo build --filter=docs
+npm install -g pnpm
 ```
 
-Without global `turbo`:
+### Installation
 
-```sh
-npx turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
+1. Clone the repository and navigate into the project root:
+   ```sh
+   cd crm-x
+   ```
+2. Install monorepo dependencies:
+   ```sh
+   pnpm install
+   ```
+
+### Command Reference
+
+The platform utilizes **Turborepo** to orchestrate workspace pipeline commands:
+
+| Command | Action |
+| :--- | :--- |
+| `pnpm run dev` | Spins up the client (`:3000`) and server (`:5000`) development instances concurrently |
+| `pnpm run build` | Compiles production bundles for all applications and packages |
+| `pnpm run lint` | Runs ESLint checks across the entire codebase |
+| `pnpm run check-types` | Executes TypeScript typechecks in every application and package workspace |
+| `pnpm run format` | Runs Prettier to format markdown, typescript, and styling code |
+
+---
+
+## 📂 Project Structure
+
 ```
-
-### Develop
-
-To develop all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo dev
+crm-x/
+├── apps/
+│   ├── crm-client/         # Next.js CRM Dashboard Application
+│   └── crm-server/         # Express Node Backend API Services
+├── packages/
+│   ├── ui/                 # Shared React component workspace
+│   ├── eslint-config/      # Shared ESLint configuration
+│   └── typescript-config/  # Shared tsconfig blueprints
+├── pnpm-workspace.yaml     # Workspace declaration map
+├── turbo.json              # Turborepo task pipeline rules
+└── README.md               # Primary project documentation
 ```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo dev
-pnpm exec turbo dev
-pnpm exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo dev --filter=web
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo login
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo login
-pnpm exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-pnpm exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)

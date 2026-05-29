@@ -19,7 +19,9 @@ import {
   ChevronRight,
   Sparkles,
   Menu,
-  X
+  X,
+  Sun,
+  Moon
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -39,6 +41,34 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [error, setError] = useState("");
+  const [theme, setTheme] = useState<'light' | 'dark'>('light')
+
+  // Theme Sync on Mount
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    
+    const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light')
+    setTheme(initialTheme)
+    
+    if (initialTheme === 'dark') {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  }, [])
+
+  const toggleTheme = () => {
+    const nextTheme = theme === 'light' ? 'dark' : 'light'
+    setTheme(nextTheme)
+    localStorage.setItem('theme', nextTheme)
+    
+    if (nextTheme === 'dark') {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  }
 
   useEffect(() => {
     const saved = localStorage.getItem('sidebar-collapsed')
@@ -295,6 +325,19 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
 
           {/* Header Right */}
           <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              className="text-muted-foreground hover:text-foreground cursor-pointer rounded-lg p-2 transition-all active:scale-95 shrink-0"
+              title={theme === 'light' ? "Switch to Dark Mode" : "Switch to Light Mode"}
+            >
+              {theme === 'light' ? (
+                <Moon className="w-5 h-5 transition-transform duration-300 hover:rotate-12" />
+              ) : (
+                <Sun className="w-5 h-5 text-amber-500 transition-transform duration-500 hover:rotate-90" />
+              )}
+            </Button>
 
             {/* Profile Dropdown */}
             <DropdownMenu>

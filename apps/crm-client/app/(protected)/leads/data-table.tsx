@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 
 import {
   ColumnDef,
@@ -73,7 +73,7 @@ export function DataTable<TData, TValue>({
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const fetchLeads = async () => {
+  const fetchLeads = useCallback(async () => {
     try {
       const response = await api.get("/api/leads")
       const fetchedData = response.data.data || response.data
@@ -102,7 +102,7 @@ export function DataTable<TData, TValue>({
         setError("Something went wrong. Please try again.");
       }
     }
-  }
+  }, [])
   
   useEffect(() => {
     fetchLeads()
