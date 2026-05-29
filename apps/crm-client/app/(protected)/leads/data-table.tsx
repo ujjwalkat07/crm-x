@@ -13,7 +13,6 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   useReactTable,
-
 } from '@tanstack/react-table'
 
 import {
@@ -41,6 +40,7 @@ import { CircleFadingPlus, CircleStop, Search, Tags, Plus, X, Trash2, SlidersHor
 import { Field, FieldLabel } from '@/components/ui/field'
 import { api } from '@/lib/axios'
 import { exportLeadsToCsv, parseCsvText } from '@/lib/csv'
+import { toast } from 'react-toastify'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -73,7 +73,7 @@ export function DataTable<TData, TValue>({
       try {
         const response = await api.get("/api/leads")
         const fetchedData = response.data.data || response.data
-        
+
         // Map backend Lead to frontend User structure
         const mappedLeads = fetchedData.map((lead: any) => ({
           id: lead.id,
@@ -87,7 +87,6 @@ export function DataTable<TData, TValue>({
           status: lead.status || "Open",
           lastSeen: lead.lastContactDate || new Date().toISOString(),
           'next date': lead.nextFollowUpDate || new Date().toISOString(),
-          image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=60'
         }))
         setLocalData(mappedLeads)
       } catch (err) {
@@ -108,8 +107,9 @@ export function DataTable<TData, TValue>({
       await Promise.all(idsToDelete.map(id => api.delete(`/api/leads/${id}`)))
       setLocalData(prev => prev.filter((lead: any) => !idsToDelete.includes(lead.id)))
       table.resetRowSelection()
+      toast.success("Successfully deleted selected leads.")
     } catch (err) {
-      alert("Failed to delete some selected leads.")
+      toast.error("Failed to delete some selected leads.")
     }
   }
 
@@ -144,7 +144,7 @@ export function DataTable<TData, TValue>({
       })
 
       const createdLead = response.data.lead || response.data.data
-      
+
       const mappedLead = {
         id: createdLead.id,
         name: createdLead.customerName,
@@ -171,8 +171,9 @@ export function DataTable<TData, TValue>({
       setStatus('Lead')
       setTags('')
       setIsAddModalOpen(false)
+      toast.success("Successfully added lead.")
     } catch (err) {
-      alert("Failed to add lead to server.")
+      toast.error("Failed to add lead to server.")
     }
   }
 
@@ -224,8 +225,9 @@ export function DataTable<TData, TValue>({
       setTags('')
       setEditingLeadId(null)
       setIsAddModalOpen(false)
+      toast.success("Successfully updated lead.")
     } catch (err) {
-      alert("Failed to update lead.")
+      toast.error("Failed to update lead.")
     }
   }
 
@@ -240,14 +242,14 @@ export function DataTable<TData, TValue>({
       const csvText = event.target?.result as string;
       if (!csvText) {
         setIsImporting(false);
-        alert("Failed to read CSV file content.");
+        toast.error("Failed to read CSV file content.");
         return;
       }
 
       try {
         const parsedRows = parseCsvText(csvText);
         if (parsedRows.length === 0) {
-          alert("The uploaded CSV file appears to be empty or has an invalid structure.");
+          toast.error("The uploaded CSV file appears to be empty or has an invalid structure.");
           setIsImporting(false);
           return;
         }
@@ -317,12 +319,12 @@ export function DataTable<TData, TValue>({
 
         if (successLeads.length > 0) {
           setLocalData(prev => [...successLeads, ...prev]);
-          alert(`Successfully imported ${successLeads.length} leads.${skippedCount > 0 ? ` Skipped ${skippedCount} invalid rows.` : ''}`);
+          toast.success(`Successfully imported ${successLeads.length} leads.${skippedCount > 0 ? ` Skipped ${skippedCount} invalid rows.` : ''}`);
         } else {
-          alert(`No leads were imported. Skipped ${skippedCount} invalid rows.`);
+          toast.warning(`No leads were imported. Skipped ${skippedCount} invalid rows.`);
         }
       } catch (err) {
-        alert("An error occurred while importing leads.");
+        toast.error("An error occurred while importing leads.");
       } finally {
         setIsImporting(false);
         // Clear value so the same file can be imported again if needed
@@ -331,7 +333,7 @@ export function DataTable<TData, TValue>({
     };
 
     reader.onerror = () => {
-      alert("Failed to read CSV file.");
+      toast.error("Failed to read CSV file.");
       setIsImporting(false);
     };
 
@@ -354,8 +356,9 @@ export function DataTable<TData, TValue>({
         try {
           await api.delete(`/api/leads/${id}`)
           setLocalData(prev => prev.filter((lead: any) => lead.id !== id))
+          toast.success("Successfully deleted lead.")
         } catch (err) {
-          alert("Failed to delete lead.")
+          toast.error("Failed to delete lead.")
         }
       },
       updateLeadStatus: async (id: string, newStatus: string) => {
@@ -366,8 +369,9 @@ export function DataTable<TData, TValue>({
               lead.id === id ? { ...lead, status: newStatus } : lead
             )
           )
+          toast.success("Successfully updated lead status.")
         } catch (err) {
-          alert("Failed to update lead status.")
+          toast.error("Failed to update lead status.")
         }
       }
     },
@@ -745,8 +749,8 @@ export function DataTable<TData, TValue>({
                       type="button"
                       onClick={() => setPriority(p)}
                       className={`px-3 py-2 rounded-md text-xs font-medium border transition-all ${priority === p
-                          ? 'bg-primary text-primary-foreground border-primary shadow-xs'
-                          : 'bg-background hover:bg-muted text-muted-foreground border-border'
+                        ? 'bg-primary text-primary-foreground border-primary shadow-xs'
+                        : 'bg-background hover:bg-muted text-muted-foreground border-border'
                         }`}
                     >
                       {p}
@@ -764,8 +768,8 @@ export function DataTable<TData, TValue>({
                       type="button"
                       onClick={() => setStatus(s)}
                       className={`px-3 py-1.5 rounded-md text-xs font-medium border transition-all ${status === s
-                          ? 'bg-primary text-primary-foreground border-primary shadow-xs'
-                          : 'bg-background hover:bg-muted text-muted-foreground border-border'
+                        ? 'bg-primary text-primary-foreground border-primary shadow-xs'
+                        : 'bg-background hover:bg-muted text-muted-foreground border-border'
                         }`}
                     >
                       {s}

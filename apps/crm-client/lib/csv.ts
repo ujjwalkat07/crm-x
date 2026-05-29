@@ -1,3 +1,5 @@
+import { toast } from 'react-toastify';
+
 /**
  * Client-side CSV export utility.
  * Formats lead data correctly and handles proper escaping for CSV format.
@@ -23,20 +25,20 @@ function escapeCsvValue(value: any): string {
   if (value === null || value === undefined) {
     return '';
   }
-  
+
   let str = '';
   if (Array.isArray(value)) {
     str = value.join(', ');
   } else {
     str = String(value);
   }
-  
+
   // If value contains quotes, commas, or newlines, escape it by wrapping in quotes
   // and duplicating existing double-quotes
   if (str.includes(',') || str.includes('"') || str.includes('\n') || str.includes('\r')) {
     return `"${str.replace(/"/g, '""')}"`;
   }
-  
+
   return str;
 }
 
@@ -45,7 +47,7 @@ function escapeCsvValue(value: any): string {
  */
 export function exportLeadsToCsv(leads: LeadExportData[], filename = 'leads_export.csv') {
   if (!leads || leads.length === 0) {
-    alert('No lead data available to export.');
+    toast.error('No lead data available to export.');
     return;
   }
 
@@ -69,7 +71,7 @@ export function exportLeadsToCsv(leads: LeadExportData[], filename = 'leads_expo
   const dataRows = leads.map(lead => {
     return headers.map(h => {
       let val = lead[h.key];
-      
+
       // Format dates nicely
       if ((h.key === 'lastSeen' || h.key === 'next date') && val && val !== '-') {
         try {
@@ -81,7 +83,7 @@ export function exportLeadsToCsv(leads: LeadExportData[], filename = 'leads_expo
           // Keep raw value if parsing fails
         }
       }
-      
+
       return escapeCsvValue(val);
     }).join(',');
   });
@@ -92,12 +94,12 @@ export function exportLeadsToCsv(leads: LeadExportData[], filename = 'leads_expo
   // Create Blob and trigger download
   const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
-  
+
   const link = document.createElement('a');
   link.setAttribute('href', url);
   link.setAttribute('download', filename);
   link.style.visibility = 'hidden';
-  
+
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -146,11 +148,11 @@ function parseCsvLine(line: string): string[] {
   const cells: string[] = [];
   let cell = '';
   let inQuotes = false;
-  
+
   for (let i = 0; i < line.length; i++) {
     const char = line[i];
     const nextChar = line[i + 1];
-    
+
     if (char === '"') {
       if (inQuotes && nextChar === '"') {
         cell += '"';
@@ -180,11 +182,11 @@ export function parseCsvText(csvText: string): Record<string, any>[] {
   const lines: string[] = [];
   let currentLine = '';
   let inQuotes = false;
-  
+
   for (let i = 0; i < csvText.length; i++) {
     const char = csvText[i];
     const nextChar = csvText[i + 1];
-    
+
     if (char === '"') {
       if (inQuotes && nextChar === '"') {
         currentLine += '"';
@@ -209,41 +211,41 @@ export function parseCsvText(csvText: string): Record<string, any>[] {
   if (currentLine) {
     lines.push(currentLine);
   }
-  
+
   if (lines.length < 2) {
     return [];
   }
-  
+
   // Parse headers and normalize keys
   const firstLine = lines[0] || '';
   const rawHeaders = parseCsvLine(firstLine);
   const headers = rawHeaders.map(h => normalizeHeaderKey(h));
-  
+
   const results: Record<string, any>[] = [];
-  
+
   for (let i = 1; i < lines.length; i++) {
     const lineText = lines[i] || '';
     const line = lineText.trim();
     if (!line) continue;
-    
+
     const values = parseCsvLine(lineText);
     const record: Record<string, any> = {};
-    
+
     headers.forEach((header, index) => {
       if (header) {
         let val: any = values[index] || '';
-        
+
         // Handle tags specially (convert comma-separated string to array)
         if (header === 'tags') {
           val = val ? val.split(',').map((t: string) => t.trim()).filter(Boolean) : [];
         }
-        
+
         record[header] = val;
       }
     });
-    
+
     results.push(record);
   }
-  
+
   return results;
 }
