@@ -8,21 +8,6 @@
 
 Designed with **rich aesthetics**, the dashboard features beautiful glassmorphism, adaptive dark mode compliance, and precise micro-interactions for a premium CRM experience.
 
----
-
-## 💎 Key Features
-
-- ⚡ **Turborepo Monorepo Architecture** – Ultra-fast cached builds, type verification, and workspace organization managed via `pnpm` workspaces.
-- 👥 **High-Fidelity Leads Manager** – Advanced data-tables with client-side CSV bulk importing, targeted exports (selected, filtered, or all), pagination, and smart multi-criteria filtering.
-- 📞 **Click-to-Call Direct Dialing** – Instant, styled calling options (`tel:` protocols) embedded directly inside phone cells and primary action toolbars, complete with group hover focus states.
-- 🎨 **Visual Color Badging** – Dynamic color codes matching priority levels (Rose for High, Amber for Medium, Blue for Low) and customized lead status tags (Blue for Open, Emerald for Active, Slate for Closed, Rose for Lost).
-- 🔄 **Auto Database Syncing** – Standalone reactive callback handles (`fetchLeads`) that trigger post-deletion to keep the client application completely synchronized with the server's backend database.
-- 🔔 **Modern Notification Popups** – Direct integration with `react-toastify` for toast success alerts and error popups, replacing default browser actions.
-- 🛡️ **Custom ConfirmModal Overlay** – Elegant custom glassmorphism modal overlays replacing browser-native confirmations for critical destructive actions.
-- 🗂️ **Collapsible Dashboard Sidebar** – A responsive desktop sidebar that dynamically collapses from `w-64` to `w-20` on click, saving its state in `localStorage` to prevent UI shifting during navigation.
-
----
-
 ## 🛠️ Tech Stack
 
 ### Client (`apps/crm-client`)
