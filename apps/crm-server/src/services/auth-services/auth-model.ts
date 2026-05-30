@@ -28,7 +28,7 @@ export interface PublicAuthUser {
   updatedAt: Date;
 }
 
-type UserRecord = {
+interface UserRecord {
   id: string;
   fullName: string;
   email: string;
