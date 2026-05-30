@@ -298,7 +298,6 @@ const verifyJWTToken: RequestHandler = async (
         ),
       );
   } catch (error: any) {
-    console.log("Error in verifyJWTToken:", error);
     if (error instanceof ApiErrorHandling) {
       return res
         .status(error.statusCode)
