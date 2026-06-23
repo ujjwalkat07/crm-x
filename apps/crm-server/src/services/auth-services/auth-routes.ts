@@ -5,6 +5,7 @@ import {
   userLogout,
   genrateNewAccessAndRefreshToken,
   verifyJWTToken,
+  updateProfileController,
 } from "../auth-services/auth-controllers";
 import { forgotPassword } from "./controllers/forgot-pass";
 import { verifyJWT } from "../../middleware/jwt-verify";
@@ -18,6 +19,8 @@ authRoutes.post("/new-refresh-token", genrateNewAccessAndRefreshToken);
 authRoutes.post("/forgot-password", forgotPassword);
 
 authRoutes.post("/verify-token", verifyJWTToken);
+authRoutes.put("/profile", verifyJWT, updateProfileController);
 
 export { authRoutes };
+
 

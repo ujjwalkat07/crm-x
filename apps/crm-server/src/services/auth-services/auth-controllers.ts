@@ -321,10 +321,88 @@ const verifyJWTToken: RequestHandler = async (
   }
 };
 
+const updateProfileController = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      throw new ApiErrorHandling(HttpCodes.UNAUTHORIZED, "Unauthorized access");
+    }
+
+    const { fullName, email, password } = req.body;
+
+    if (!fullName?.trim() && !email?.trim() && !password?.trim()) {
+      throw new ApiErrorHandling(
+        HttpCodes.BAD_REQUEST,
+        "At least one field (fullName, email, or password) must be provided for update",
+      );
+    }
+
+    // If email is provided, check if it's already in use by another user
+    if (email && email.toLowerCase() !== req.user?.email?.toLowerCase()) {
+      const existingUser = await Auth.findOne({ email });
+      if (existingUser) {
+        throw new ApiErrorHandling(
+          HttpCodes.BAD_REQUEST,
+          "Email is already in use by another user",
+        );
+      }
+    }
+
+    const updatedUser = await Auth.updateProfile(userId, {
+      fullName: fullName?.trim() || undefined,
+      email: email?.trim() || undefined,
+      password: password || undefined,
+    });
+
+    const publicUser = sanitizeAuthUser(updatedUser);
+
+    // Generate new tokens with updated user details
+    const { accessToken, refreshToken } = await getAccessAndRefreshToken(
+      String(updatedUser.id)
+    );
+
+    return res
+      .status(HttpCodes.OK)
+      .cookie("accessToken", accessToken, {
+        ...authCookieOptions,
+        expires: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
+        maxAge: 84600 * 1000,
+      })
+      .cookie("refreshToken", refreshToken, {
+        ...authCookieOptions,
+        expires: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
+        maxAge: 84600 * 1000,
+      })
+      .json(
+        new ApiResponse(
+          HttpCodes.OK,
+          publicUser,
+          "Profile updated successfully",
+        )
+      );
+  } catch (error) {
+    if (error instanceof ApiErrorHandling) {
+      return res
+        .status(error.statusCode)
+        .json(new ApiResponse(error.statusCode, null, error.message));
+    }
+    return res
+      .status(HttpCodes.INTERNAL_SERVER_ERROR)
+      .json(
+        new ApiResponse(
+          HttpCodes.INTERNAL_SERVER_ERROR,
+          null,
+          "Internal Server Error",
+        )
+      );
+  }
+};
+
 export {
   userLogin,
   userSignup,
   userLogout,
   genrateNewAccessAndRefreshToken,
   verifyJWTToken,
-};
+  updateProfileController,
+};

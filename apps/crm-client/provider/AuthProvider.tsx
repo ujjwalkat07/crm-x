@@ -9,18 +9,23 @@ interface SessionPayload {
   id: string;
   email?: string;
   fullname?: string;
+  fullName?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 interface AuthContextType {
   user: SessionPayload | null
   isLoading: boolean
   isAuthenticated: boolean
+  refreshUser: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   isLoading: true,
   isAuthenticated: false,
+  refreshUser: async () => {},
 })
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -59,10 +64,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user,
       isLoading,
       isAuthenticated: !!user,
+      refreshUser: checkSession,
     }}>
       {children}
     </AuthContext.Provider>
   )
 }
+
 
 export const useAuth = () => useContext(AuthContext)

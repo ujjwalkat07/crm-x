@@ -145,4 +145,28 @@ export class Auth {
 
     return toAuthDocument(user);
   }
+
+  static async updateProfile(
+    id: string,
+    data: { fullName?: string; email?: string; password?: string }
+  ) {
+    const updateData: any = {};
+    if (data.fullName !== undefined) {
+      updateData.fullName = data.fullName;
+    }
+    if (data.email !== undefined) {
+      updateData.email = data.email.toLowerCase();
+    }
+    if (data.password !== undefined) {
+      updateData.password = await hashPassword(data.password, 10);
+    }
+
+    const user = await prisma.user.update({
+      where: { id },
+      data: updateData,
+    });
+
+    return toAuthDocument(user);
+  }
 }
+

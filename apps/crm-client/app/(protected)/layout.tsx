@@ -355,10 +355,11 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
               <DropdownMenuContent align="end" className="w-52">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer flex items-center gap-2">
+                <DropdownMenuItem className="cursor-pointer flex items-center gap-2" onClick={() => router.push('/profile')}>
                   <User className="w-4 h-4 opacity-70" />
                   Profile Details
                 </DropdownMenuItem>
+
                 <DropdownMenuItem className="cursor-pointer flex items-center gap-2" disabled>
                   <Settings className="w-4 h-4 opacity-70" />
                   Preferences
