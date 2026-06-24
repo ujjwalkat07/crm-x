@@ -438,7 +438,7 @@ export function DataTable<TData, TValue>({
             </div>
           </div>
 
-          {/* Filters (Status, Priority, Tags) */}
+         {/* Filters (Status, Priority, Tags) */}
           <div className="flex flex-wrap items-center gap-2">
             <DropdownMenu>
               <div className="flex flex-col gap-1">

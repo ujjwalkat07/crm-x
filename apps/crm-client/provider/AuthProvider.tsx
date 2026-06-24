@@ -2,7 +2,7 @@
 
 import { api } from '@/lib/axios';
 import axios from 'axios';
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react'
 
 
 interface SessionPayload {
@@ -33,11 +33,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    checkSession()
-  }, [])
-
-  const checkSession = async () => {
+  const checkSession = useCallback(async () => {
     try {
       const response = await api.post("/api/auth/verify-token", {}, {
         withCredentials: true,
@@ -52,11 +48,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         setError("Something went wrong. Please try again.");
       }
+    } finally {
+      setIsLoading(false)
     }
-    finally {
-      setIsLoading(false) 
-    }
-  }
+  }, [])
+
+  useEffect(() => {
+    checkSession()
+  }, [checkSession])
 
 
   return (
