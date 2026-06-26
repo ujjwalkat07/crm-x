@@ -21,7 +21,8 @@ import {
   Menu,
   X,
   Sun,
-  Moon
+  Moon,
+  Mail
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -131,6 +132,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   const navLinks = [
     { name: 'Dashboard', href: '#', icon: LayoutDashboard, disabled: true },
     { name: 'Leads', href: '/leads', icon: Users },
+    { name: 'Inbox', href: '/inbox', icon: Mail },
     { name: 'Deals', href: '#', icon: Briefcase, disabled: true },
     { name: 'Analytics', href: '#', icon: BarChart3, disabled: true },
     { name: 'Settings', href: '#', icon: Settings, disabled: true },
