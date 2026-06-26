@@ -1,60 +1,9 @@
 // Gmail REST API helper — all calls made directly from the browser using the
 // OAuth access token obtained via @react-oauth/google
 
+import { GmailLabel, GmailListResponse, GmailMessage, GmailMessagePart, ParsedEmail } from "@/types/types";
+
 const GMAIL_BASE = "https://gmail.googleapis.com/gmail/v1/users/me";
-
-export interface GmailLabel {
-  id: string;
-  name: string;
-  messagesUnread?: number;
-  messagesTotal?: number;
-  type?: string;
-}
-
-export interface GmailMessageHeader {
-  name: string;
-  value: string;
-}
-
-export interface GmailMessagePart {
-  partId?: string;
-  mimeType?: string;
-  filename?: string;
-  headers?: GmailMessageHeader[];
-  body?: { size: number; data?: string };
-  parts?: GmailMessagePart[];
-}
-
-export interface GmailMessage {
-  id: string;
-  threadId: string;
-  labelIds?: string[];
-  snippet?: string;
-  payload?: GmailMessagePart;
-  internalDate?: string;
-}
-
-export interface GmailListResponse {
-  messages?: { id: string; threadId: string }[];
-  nextPageToken?: string;
-  resultSizeEstimate?: number;
-}
-
-export interface ParsedEmail {
-  id: string;
-  threadId: string;
-  subject: string;
-  from: string;
-  fromName: string;
-  fromEmail: string;
-  to: string;
-  date: string;
-  snippet: string;
-  body: string;
-  isRead: boolean;
-  isStarred: boolean;
-  labelIds: string[];
-}
 
 async function gmailFetch(endpoint: string, token: string) {
   const res = await fetch(`${GMAIL_BASE}${endpoint}`, {

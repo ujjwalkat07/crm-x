@@ -7,8 +7,6 @@ import {
   fetchLabels,
   formatEmailDate,
   getInitials,
-  type ParsedEmail,
-  type GmailLabel,
 } from '@/lib/gmail'
 import {
   Mail,
@@ -33,7 +31,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { toast } from 'react-toastify'
-import { Folder } from '@/types/types'
+import { Folder, GmailLabel, ParsedEmail } from '@/types/types'
 
 const FOLDERS: Folder[] = [
   { id: 'inbox', label: 'Inbox', icon: <Inbox className="w-4 h-4" />, gmailLabelId: 'INBOX' },
