@@ -1,8 +1,10 @@
 'use client'
 
+import { useState } from 'react'
 import { ColumnDef } from '@tanstack/react-table'
-
-import { MoreHorizontal, ArrowUpDown, Phone, Edit, Trash2, ChevronDown } from 'lucide-react'
+import { AnimatePresence } from 'framer-motion'
+import { MoreHorizontal, ArrowUpDown, Phone, Edit, Trash2, ChevronDown, Mail } from 'lucide-react'
+import GmailPanel from '@/components/GmailPanel'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -274,77 +276,109 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row, table }) => {
       const user = row.original
       const phone = (user as any).phone as string
+      const [gmailOpen, setGmailOpen] = useState(false)
 
       return (
-        <div className="flex items-center justify-end gap-1">
-          {phone && phone !== '-' ? (
-            <Button
-              variant="ghost"
-              size="icon-xs"
-              asChild
-              className="text-muted-foreground hover:text-primary hover:bg-primary/10 p-1.5 rounded-md cursor-pointer transition-colors shrink-0"
-              title={`Call ${phone}`}
-            >
-              <a href={`tel:${phone}`}>
-                <Phone className="w-3.5 h-3.5" />
-              </a>
-            </Button>
-          ) : (
-            <Button
-              variant="ghost"
-              size="icon-xs"
-              disabled
-              className="text-muted-foreground/20 p-1.5 rounded-md cursor-not-allowed shrink-0"
-              title="No phone number"
-            >
-              <Phone className="w-3.5 h-3.5" />
-            </Button>
-          )}
-
-          <Button
-            variant="ghost"
-            size="icon-xs"
-            className="text-muted-foreground hover:text-primary hover:bg-primary/10 p-1.5 rounded-md cursor-pointer transition-colors shrink-0"
-            onClick={() => {
-              (table.options.meta as any)?.editLead(user)
-            }}
-            title="Edit Lead"
-          >
-            <Edit className="w-3.5 h-3.5" />
-          </Button>
-
-          <Button
-            variant="ghost"
-            size="icon-xs"
-            className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 p-1.5 rounded-md cursor-pointer transition-colors shrink-0"
-            onClick={() => {
-              (table.options.meta as any)?.confirmDeleteLead(user.id, user.name)
-            }}
-            title="Delete Lead"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-          </Button>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant='ghost' className='h-7 w-7 p-0 hover:bg-muted cursor-pointer rounded-md shrink-0'>
-                <span className='sr-only'>Open menu</span>
-                <MoreHorizontal className='h-3.5 h-3.5 text-muted-foreground' />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align='end' className="w-40 bg-card border border-border shadow-md rounded-md p-1">
-              <DropdownMenuLabel className="text-[10px] font-bold text-muted-foreground/80 uppercase px-2 py-1.5">More Options</DropdownMenuLabel>
-              <DropdownMenuSeparator className="my-1 border-b border-border/50" />
-              <DropdownMenuItem
-                className="cursor-pointer flex items-center gap-2 text-xs font-semibold px-2 py-1.5 rounded-md hover:bg-muted transition-colors"
-                onClick={() => navigator.clipboard.writeText(user.id)}
+        <>
+          <div className="flex items-center justify-end gap-1">
+            {phone && phone !== '-' ? (
+              <Button
+                variant="ghost"
+                size="icon-xs"
+                asChild
+                className="text-muted-foreground hover:text-primary hover:bg-primary/10 p-1.5 rounded-md cursor-pointer transition-colors shrink-0"
+                title={`Call ${phone}`}
               >
-                <span className="w-1 h-1 rounded-full bg-muted-foreground/50 shrink-0" />
-                Copy ID
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+                <a href={`tel:${phone}`}>
+                  <Phone className="w-3.5 h-3.5" />
+                </a>
+              </Button>
+            ) : (
+              <Button
+                variant="ghost"
+                size="icon-xs"
+                disabled
+                className="text-muted-foreground/20 p-1.5 rounded-md cursor-not-allowed shrink-0"
+                title="No phone number"
+              >
+                <Phone className="w-3.5 h-3.5" />
+              </Button>
+            )}
+
+            {/* AI Email Button */}
+            <Button
+              variant="ghost"
+              size="icon-xs"
+              className="text-muted-foreground hover:text-primary hover:bg-primary/10 p-1.5 rounded-md cursor-pointer transition-colors shrink-0"
+              onClick={() => setGmailOpen(true)}
+              title="AI Email Assistant"
+            >
+              <Mail className="w-3.5 h-3.5" />
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="icon-xs"
+              className="text-muted-foreground hover:text-primary hover:bg-primary/10 p-1.5 rounded-md cursor-pointer transition-colors shrink-0"
+              onClick={() => {
+                (table.options.meta as any)?.editLead(user)
+              }}
+              title="Edit Lead"
+            >
+              <Edit className="w-3.5 h-3.5" />
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="icon-xs"
+              className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 p-1.5 rounded-md cursor-pointer transition-colors shrink-0"
+              onClick={() => {
+                (table.options.meta as any)?.confirmDeleteLead(user.id, user.name)
+              }}
+              title="Delete Lead"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </Button>
+
+              <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant='ghost' className='h-7 w-7 p-0 hover:bg-muted cursor-pointer rounded-md shrink-0'>
+                  <span className='sr-only'>Open menu</span>
+                  <MoreHorizontal className='h-3.5 h-3.5 text-muted-foreground' />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align='end' className="w-40 bg-card border border-border shadow-md rounded-md p-1">
+                <DropdownMenuLabel className="text-[10px] font-bold text-muted-foreground/80 uppercase px-2 py-1.5">More Options</DropdownMenuLabel>
+                <DropdownMenuSeparator className="my-1 border-b border-border/50" />
+                <DropdownMenuItem
+                  className="cursor-pointer flex items-center gap-2 text-xs font-semibold px-2 py-1.5 rounded-md hover:bg-muted transition-colors"
+                  onClick={() => setGmailOpen(true)}
+                >
+                  <Mail className="w-3 h-3 text-muted-foreground shrink-0" />
+                  AI Email
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="cursor-pointer flex items-center gap-2 text-xs font-semibold px-2 py-1.5 rounded-md hover:bg-muted transition-colors"
+                  onClick={() => navigator.clipboard.writeText(user.id)}
+                >
+                  <span className="w-1 h-1 rounded-full bg-muted-foreground/50 shrink-0" />
+                  Copy ID
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          {/* GmailPanel Slide-Over — includes its own backdrop */}
+          <AnimatePresence>
+            {gmailOpen && (
+              <GmailPanel
+                contactEmail={(user as any).email ?? ''}
+                contactName={(user as any).name ?? ''}
+                onClose={() => setGmailOpen(false)}
+              />
+            )}
+          </AnimatePresence>
+        </>
       )
     }
   }

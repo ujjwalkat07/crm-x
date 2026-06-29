@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import { authRoutes } from "./services/auth-services/auth-routes";
 import { leadRoutes } from "./services/crm-upload/upload-routes";
+import { emailRoutes } from "./services/email/email-routes";
 import { config } from "./config/env-config/config";
 
 dotenv.config();
@@ -25,6 +26,7 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/leads", leadRoutes);
+app.use("/api/email", emailRoutes);
 
 
 app.get("/", (_req, res) => {

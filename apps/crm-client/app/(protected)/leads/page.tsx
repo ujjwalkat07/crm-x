@@ -4,12 +4,15 @@ import { useEffect, useState } from 'react';
 import { api } from '@/lib/axios';
 import { columns, User } from './columns'
 import { DataTable } from './data-table'
-import { Loader2 } from 'lucide-react';
+import { Loader2, Sparkles } from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
+import GmailPanel from '@/components/GmailPanel';
 
 export default function Page() {
   const [data, setData] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isGeneralGmailOpen, setIsGeneralGmailOpen] = useState(false);
 
   useEffect(() => {
     async function fetchLeads() {
@@ -44,7 +47,7 @@ export default function Page() {
   }, []);
 
   return (
-    <div className='p-6 md:p-8 space-y-6'>
+    <div className='p-6 md:p-8 space-y-6 relative min-h-screen'>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-border/60 pb-5">
         <div>
           <h1 className='text-3xl font-bold tracking-tight'>All Leads</h1>
@@ -65,6 +68,25 @@ export default function Page() {
       ) : (
         <DataTable columns={columns} data={data} />
       )}
+
+      {/* Floating AI Email Button */}
+      <button
+        onClick={() => setIsGeneralGmailOpen(true)}
+        className="fixed bottom-6 right-6 z-50 flex items-center justify-center gap-2 px-4 py-3 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-xl hover:shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all duration-200 border border-violet-500/20 cursor-pointer"
+        title="Compose Email with AI"
+      >
+        <Sparkles className="w-4 h-4 text-white animate-pulse" />
+        <span className="text-xs font-bold tracking-wide">AI Email</span>
+      </button>
+
+      {/* General Email Slide-Over */}
+      <AnimatePresence>
+        {isGeneralGmailOpen && (
+          <GmailPanel
+            onClose={() => setIsGeneralGmailOpen(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }
