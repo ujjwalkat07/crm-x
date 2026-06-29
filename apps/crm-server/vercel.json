@@ -1,6 +1,11 @@
 {
   "version": 2,
-  "buildCommand": "pnpm build",
+  "builds": [
+    {
+      "src": "src/server.ts",
+      "use": "@vercel/node"
+    }
+  ],
   "routes": [
     {
       "src": "/(.*)",
