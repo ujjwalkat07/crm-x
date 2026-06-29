@@ -1,7 +1,7 @@
 generator client {
-  provider   = "prisma-client"
-  output     = "../src/generated/prisma"
-  engineType = "client",
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  engineType   = "client"
   moduleFormat = "commonjs"
 }
 
