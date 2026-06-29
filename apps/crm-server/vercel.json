@@ -1,10 +1,13 @@
 {
   "version": 2,
-  "buildCommand": "cd ../.. && npx turbo run build --filter=crm-server",
-  "rewrites": [
+  "build": {
+    "src": "src/server.ts",
+    "use": "@vercel/node"
+  },
+  "routes": [
     {
-      "source": "/(.*)",
-      "destination": "/api/index"
+      "src": "/(.*)",
+      "dest": "src/server.ts"
     }
   ]
 }

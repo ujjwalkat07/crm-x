@@ -1,4 +1,4 @@
-import { Response as ExpressResponse } from "express";
+import { Response} from "express";
 import { AuthRequest } from "../../middleware/jwt-verify";
 import nodemailer from "nodemailer";
 import { config } from "../../config/env-config/config";
@@ -9,8 +9,8 @@ const NVIDIA_BASE_URL = "https://integrate.api.nvidia.com/v1";
 // ── Controller: AI Generate Email 
 export const aiGenerateEmail = async (
   req: AuthRequest,
-  res: ExpressResponse
-): Promise<ExpressResponse> => {
+  res: Response
+): Promise<Response> => {
   try {
     const { contactEmail, contactName, userMessage } = req.body;
 
@@ -33,7 +33,7 @@ The email should be professional, polished, and appropriately signed off.
 Do NOT include any other text, explanation, or markdown outside the JSON object.
 Return ONLY the JSON object.`;
 
-    const response = (await fetch(`${NVIDIA_BASE_URL}/chat/completions`, {
+    const response = await fetch(`${NVIDIA_BASE_URL}/chat/completions`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -50,7 +50,7 @@ Return ONLY the JSON object.`;
         max_tokens: 1024,
         stream: false,
       }),
-    })) as any;
+    });
 
 
     if (!response.ok) {
@@ -89,8 +89,8 @@ Return ONLY the JSON object.`;
 // ── Controller: Send Email via SMTP 
 export const sendEmail = async (
   req: AuthRequest,
-  res: ExpressResponse
-): Promise<ExpressResponse> => {
+  res: Response
+): Promise<Response> => {
   try {
     const { to, toName, subject, htmlBody } = req.body;
 
@@ -158,8 +158,8 @@ export const sendEmail = async (
 // ── Controller: Get Sent Emails
 export const getEmails = async (
   req: AuthRequest,
-  res: ExpressResponse
-): Promise<ExpressResponse> => {
+  res: Response
+): Promise<Response> => {
   try {
     if (!req.user?.id) {
       return res.status(401).json({ message: "Unauthorized" });
