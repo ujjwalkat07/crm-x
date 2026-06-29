@@ -73,7 +73,7 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="relative min-h-screen bg-black text-neutral-100 overflow-x-hidden font-sans select-none selection:bg-white selection:text-black">
+    <div className="relative min-h-screen bg-black text-neutral-100 overflow-hidden font-sans select-none selection:bg-white selection:text-black">
 
       {/* Premium Editorial Monochrome Glow Blobs */}
       <motion.div
@@ -377,109 +377,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Live Interactive Pipeline Preview Section */}
-      <section id="pipeline" className="py-24 container mx-auto px-6 md:px-12 z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
-
-          {/* Copy Side */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={fadeInUp}
-            className="lg:col-span-5 text-left flex flex-col items-start"
-          >
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-md border border-zinc-800 bg-zinc-950 text-zinc-300 text-[10px] font-bold uppercase tracking-widest mb-4">
-              <TrendingUp className="w-3 h-3 text-white" />
-              <span>Interactive Pipeline</span>
-            </div>
-            <h2 className="text-3xl md:text-4xl font-extrabold mb-6 leading-tight">
-              Animate Leads Across Custom Sales Stages
-            </h2>
-            <p className="text-zinc-400 mb-8 leading-relaxed">
-              Experience the smoothness of CRM-X. Click on any lead card to focus, and use the controls below to advance their stage dynamically inside our live interactive pipeline!
-            </p>
-
-            {/* Stage Controls */}
-            <div className="bg-zinc-950/60 border border-zinc-900 rounded-xl p-4 w-full space-y-4">
-              <div className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest flex items-center gap-1.5">
-                <Briefcase className="w-3.5 h-3.5 text-white" />
-                <span>Move "{activePipelineLead}" To:</span>
-              </div>
-              <div className="grid grid-cols-4 gap-2">
-                {["Open", "Active", "Closed", "Lost"].map(stage => (
-                  <button
-                    key={stage}
-                    onClick={() => updateLeadStatus(activePipelineLead, stage)}
-                    disabled={currentLeadData.status === stage}
-                    className={`px-2.5 py-1.5 rounded text-[10px] font-bold uppercase border tracking-wider transition-all active:scale-95 ${currentLeadData.status === stage
-                        ? "bg-white border-white text-black cursor-default"
-                        : "bg-black border-zinc-850 text-zinc-450 hover:border-zinc-700 hover:text-white"
-                      }`}
-                  >
-                    {stage}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Pipeline Display Side */}
-          <div className="lg:col-span-7 bg-zinc-950/30 border border-zinc-900 rounded-2xl p-6 backdrop-blur-md relative overflow-hidden">
-
-            <div className="grid grid-cols-4 gap-3 text-center min-h-[300px]">
-
-              {/* Pipeline Columns */}
-              {["Open", "Active", "Closed", "Lost"].map(colStage => {
-                const columnLeads = mockLeads.filter(l => l.status === colStage);
-
-                return (
-                  <div key={colStage} className="flex flex-col bg-black/40 rounded-xl border border-zinc-900/60 p-2 space-y-3">
-                    <div className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 border-b border-zinc-900 pb-1.5">
-                      {colStage} ({columnLeads.length})
-                    </div>
-
-                    <div className="flex-1 space-y-2">
-                      <AnimatePresence mode="popLayout">
-                        {columnLeads.map(lead => (
-                          <motion.div
-                            layout
-                            key={lead.name}
-                            initial={{ scale: 0.85, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.85, opacity: 0 }}
-                            transition={{ type: "spring", stiffness: 350, damping: 28 }}
-                            onClick={() => setActivePipelineLead(lead.name)}
-                            className={`p-3 rounded border text-left cursor-pointer transition-colors relative overflow-hidden ${activePipelineLead === lead.name
-                                ? "bg-zinc-900 border-white"
-                                : "bg-black hover:bg-zinc-950 border-zinc-900 hover:border-zinc-800"
-                              }`}
-                          >
-                            {activePipelineLead === lead.name && (
-                              <motion.div
-                                layoutId="active-indicator"
-                                className="absolute left-0 top-0 bottom-0 w-1 bg-white"
-                              />
-                            )}
-                            <div className="text-[10px] font-bold text-zinc-200 truncate">{lead.name}</div>
-                            <div className="text-[9px] text-zinc-500 truncate mt-0.5">{lead.contact}</div>
-                            <div className="flex items-center justify-between mt-2">
-                              <span className="text-[10px] font-mono font-semibold text-zinc-400">{lead.value}</span>
-                              <span className={`w-1.5 h-1.5 rounded-full ${lead.priority === 'high' ? 'bg-white' : 'bg-zinc-650'
-                                }`} />
-                            </div>
-                          </motion.div>
-                        ))}
-                      </AnimatePresence>
-                    </div>
-                  </div>
-                );
-              })}
-
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Trust & Benefits Section */}
       <section id="benefits" className="py-24 bg-zinc-950 border-t border-zinc-900 relative z-10">
