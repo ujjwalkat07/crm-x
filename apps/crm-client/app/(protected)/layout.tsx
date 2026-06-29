@@ -39,8 +39,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const router = useRouter()
   const { user, isLoading } = useAuth()
-  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [error, setError] = useState("");
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
 
@@ -69,19 +68,6 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
     } else {
       document.documentElement.classList.remove('dark')
     }
-  }
-
-  useEffect(() => {
-    const saved = localStorage.getItem('sidebar-collapsed')
-    if (saved !== null) {
-      setIsSidebarCollapsed(saved === 'true')
-    }
-  }, [])
-
-  const toggleSidebar = () => {
-    const nextState = !isSidebarCollapsed
-    setIsSidebarCollapsed(nextState)
-    localStorage.setItem('sidebar-collapsed', String(nextState))
   }
 
   useEffect(() => {
@@ -130,260 +116,146 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   }
 
   const navLinks = [
-    { name: 'Dashboard', href: '#', icon: LayoutDashboard, disabled: true },
     { name: 'Leads', href: '/leads', icon: Users },
     { name: 'Inbox', href: '/inbox', icon: Mail },
-    { name: 'Deals', href: '#', icon: Briefcase, disabled: true },
-    { name: 'Analytics', href: '#', icon: BarChart3, disabled: true },
-    { name: 'Settings', href: '#', icon: Settings, disabled: true },
+    { name: 'Profile', href: '/profile', icon: User},
   ]
 
   return (
-    <div className="min-h-screen bg-muted/10 text-foreground flex">
-      {/* Desktop Sidebar */}
-      <aside className={`hidden md:flex flex-col ${isSidebarCollapsed ? 'w-20' : 'w-64'} bg-card border-r border-border h-screen fixed left-0 top-0 z-30 transition-all duration-300`}>
-        {/* Brand */}
-        <div className={`h-16 flex items-center ${isSidebarCollapsed ? 'justify-center px-2' : 'justify-between px-6'} border-b border-border`}>
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-primary-foreground shadow-xs shrink-0">
+    <div className="min-h-screen bg-muted/10 text-foreground flex flex-col">
+      {/* Top Header */}
+      <header className="h-16 border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-40 flex items-center justify-between px-6 md:px-8 shadow-xs">
+        {/* Left Side: Brand Logo */}
+        <div className="flex items-center gap-6">
+          <Link href="/leads" className="flex items-center gap-2.5 group">
+            <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-primary-foreground shadow-xs shrink-0 transition-transform group-hover:scale-105">
               <Sparkles className="w-5 h-5 animate-pulse" />
             </div>
-            {!isSidebarCollapsed && (
-              <span className="font-bold text-xl tracking-tight bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent truncate animate-in fade-in duration-200">
-                CRM-X
-              </span>
-            )}
-          </div>
-          <Button
-            variant="ghost"
-            size="icon-xs"
-            onClick={toggleSidebar}
-            className="hidden md:flex text-muted-foreground hover:text-foreground cursor-pointer rounded-md p-1 hover:bg-muted shrink-0"
-            title={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            {isSidebarCollapsed ? (
-              <ChevronRight className="w-4 h-4" />
-            ) : (
-              <ChevronLeft className="w-4 h-4" />
-            )}
-          </Button>
-        </div>
+            <span className="font-bold text-xl tracking-tight bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent truncate">
+              CRM-X
+            </span>
+          </Link>
+          
+          {/* Desktop Navigation Links */}
+          <nav className="hidden md:flex items-center gap-1.5 ml-4">
+            {navLinks.map((link) => {
+              const Icon = link.icon
+              const isActive = pathname === link.href
 
-        {/* Navigation */}
-        <nav className="flex-1 px-3 py-6 space-y-1.5 overflow-y-auto">
-          {navLinks.map((link) => {
-            const Icon = link.icon
-            const isActive = pathname === link.href
-
-            return (
-              <Link
-                key={link.name}
-                href={link.disabled ? '#' : link.href}
-                className={`flex items-center ${isSidebarCollapsed ? 'justify-center px-2 py-3' : 'gap-3 px-3 py-2.5'} rounded-lg text-sm font-medium transition-all ${link.disabled
-                    ? 'opacity-40 cursor-not-allowed hover:bg-transparent'
-                    : isActive
+              return (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                    isActive
                       ? 'bg-primary text-primary-foreground shadow-xs shadow-primary/10'
                       : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                   }`}
-                onClick={(e) => link.disabled && e.preventDefault()}
-                title={isSidebarCollapsed ? link.name : undefined}
-              >
-                <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-primary-foreground' : 'text-muted-foreground'}`} />
-                {!isSidebarCollapsed && (
-                  <span className="truncate animate-in fade-in duration-200">{link.name}</span>
-                )}
-              </Link>
-            )
-          })}
-        </nav>
-
-        {/* Footer Profile */}
-        <div className="p-4 border-t border-border bg-muted/30 transition-all duration-300">
-          <div className={`flex ${isSidebarCollapsed ? 'flex-col items-center gap-4' : 'items-center gap-3'}`}>
-            <div className="relative w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center font-semibold text-primary text-sm shadow-inner shrink-0">
-              {initials}
-              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-card animate-pulse" />
-            </div>
-            
-            {!isSidebarCollapsed ? (
-              <>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold truncate text-foreground leading-tight">
-                    {fullName}
-                  </p>
-                  <p className="text-xs text-muted-foreground truncate leading-tight mt-0.5">
-                    {email}
-                  </p>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon-xs"
-                  onClick={handleLogout}
-                  className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 cursor-pointer shrink-0"
-                  title="Logout"
                 >
-                  <LogOut className="w-4 h-4" />
-                </Button>
-              </>
-            ) : (
-              <Button
-                variant="ghost"
-                size="icon-xs"
-                onClick={handleLogout}
-                className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 cursor-pointer shrink-0 p-1.5 rounded-md hover:bg-muted"
-                title="Logout"
-              >
-                <LogOut className="w-4 h-4" />
-              </Button>
-            )}
-          </div>
+                  <Icon className="w-3.5 h-3.5" />
+                  <span>{link.name}</span>
+                </Link>
+              )
+            })}
+          </nav>
         </div>
-      </aside>
 
-      {/* Mobile Sidebar Modal */}
-      {isMobileSidebarOpen && (
-        <div className="md:hidden fixed inset-0 z-50 flex">
-          <div className="fixed inset-0 bg-black/40 backdrop-blur-xs" onClick={() => setIsMobileSidebarOpen(false)} />
-          <aside className="relative flex flex-col w-64 bg-card h-full border-r border-border animate-in slide-in-from-left duration-200">
-            <div className="h-16 flex items-center justify-between px-6 border-b border-border">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground">
-                  <Sparkles className="w-4 h-4" />
-                </div>
-                <span className="font-bold text-lg">CRM-X</span>
-              </div>
-              <Button variant="ghost" size="icon" onClick={() => setIsMobileSidebarOpen(false)}>
-                <X className="w-4 h-4" />
-              </Button>
-            </div>
-            <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
-              {navLinks.map((link) => {
-                const Icon = link.icon
-                const isActive = pathname === link.href
+        {/* Right Side Controls */}
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleTheme}
+            className="text-muted-foreground hover:text-foreground cursor-pointer rounded-lg p-2 transition-all active:scale-95 shrink-0 animate-in fade-in duration-300"
+            title={theme === 'light' ? "Switch to Dark Mode" : "Switch to Light Mode"}
+          >
+            {theme === 'light' ? (
+              <Moon className="w-5 h-5 transition-transform duration-300 hover:rotate-12" />
+            ) : (
+              <Sun className="w-5 h-5 text-amber-500 transition-transform duration-500 hover:rotate-90" />
+            )}
+          </Button>
 
-                return (
-                  <Link
-                    key={link.name}
-                    href={link.disabled ? '#' : link.href}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${link.disabled
-                        ? 'opacity-40 cursor-not-allowed'
-                        : isActive
-                          ? 'bg-primary text-primary-foreground shadow-xs'
-                          : 'text-muted-foreground hover:bg-muted'
-                      }`}
-                    onClick={(e) => {
-                      if (link.disabled) e.preventDefault()
-                      else setIsMobileSidebarOpen(false)
-                    }}
-                  >
-                    <Icon className="w-4 h-4" />
-                    {link.name}
-                  </Link>
-                )
-              })}
-            </nav>
-            <div className="p-4 border-t border-border bg-muted/30">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center font-semibold text-primary text-sm">
+          {/* Profile Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center gap-2.5 p-1 rounded-lg hover:bg-muted transition-all outline-none cursor-pointer">
+                <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground border border-border flex items-center justify-center font-medium text-xs shadow-inner">
                   {initials}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold truncate leading-tight">{fullName}</p>
-                  <p className="text-xs text-muted-foreground truncate leading-tight mt-0.5">{email}</p>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon-xs"
-                  onClick={handleLogout}
-                  className="text-muted-foreground hover:text-destructive"
+                <span className="hidden sm:block text-xs font-semibold text-foreground/80 leading-none">
+                  {fullName.split(' ')[0]}
+                </span>
+                <ChevronDown className="hidden sm:block w-3.5 h-3.5 text-muted-foreground" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-52">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="cursor-pointer flex items-center gap-2" onClick={() => router.push('/profile')}>
+                <User className="w-4 h-4 opacity-70" />
+                Profile Details
+              </DropdownMenuItem>
+
+              <DropdownMenuItem className="cursor-pointer flex items-center gap-2" disabled>
+                <Settings className="w-4 h-4 opacity-70" />
+                Preferences
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={handleLogout}
+                className="text-destructive focus:bg-destructive/10 cursor-pointer flex items-center gap-2"
+              >
+                <LogOut className="w-4 h-4" />
+                Log out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Mobile Menu Toggle Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden text-muted-foreground hover:text-foreground p-1 hover:bg-muted rounded-md cursor-pointer"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </Button>
+        </div>
+      </header>
+
+      {/* Mobile Dropdown Navigation Menu */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden border-b border-border bg-card shadow-md animate-in slide-in-from-top-4 duration-200 z-30">
+          <nav className="px-4 py-4 space-y-1">
+            {navLinks.map((link) => {
+              const Icon = link.icon
+              const isActive = pathname === link.href
+
+              return (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                    isActive
+                      ? 'bg-primary text-primary-foreground shadow-xs'
+                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                  }`}
+                  onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <LogOut className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-          </aside>
+                  <Icon className="w-4 h-4" />
+                  <span>{link.name}</span>
+                </Link>
+              )
+            })}
+          </nav>
         </div>
       )}
 
-      {/* Main Wrapper */}
-      <div className={`flex-1 flex flex-col ${isSidebarCollapsed ? 'md:pl-20' : 'md:pl-64'} min-w-0 transition-all duration-300`}>
-        {/* Top Header */}
-        <header className="h-16 border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-20 flex items-center justify-between px-6 md:px-8 shadow-xs">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden text-muted-foreground hover:text-foreground"
-              onClick={() => setIsMobileSidebarOpen(true)}
-            >
-              <Menu className="w-5 h-5" />
-            </Button>
-            <div>
-              <h2 className="text-base font-semibold text-foreground md:text-lg flex items-center gap-2">
-                Leads Dashboard
-              </h2>
-            </div>
-          </div>
-
-          {/* Header Right */}
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleTheme}
-              className="text-muted-foreground hover:text-foreground cursor-pointer rounded-lg p-2 transition-all active:scale-95 shrink-0"
-              title={theme === 'light' ? "Switch to Dark Mode" : "Switch to Light Mode"}
-            >
-              {theme === 'light' ? (
-                <Moon className="w-5 h-5 transition-transform duration-300 hover:rotate-12" />
-              ) : (
-                <Sun className="w-5 h-5 text-amber-500 transition-transform duration-500 hover:rotate-90" />
-              )}
-            </Button>
-
-            {/* Profile Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-2.5 p-1 rounded-lg hover:bg-muted transition-all outline-none cursor-pointer">
-                  <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground border border-border flex items-center justify-center font-medium text-xs shadow-inner">
-                    {initials}
-                  </div>
-                  <span className="hidden sm:block text-xs font-semibold text-foreground/80 leading-none">
-                    {fullName.split(' ')[0]}
-                  </span>
-                  <ChevronDown className="hidden sm:block w-3.5 h-3.5 text-muted-foreground" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-52">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer flex items-center gap-2" onClick={() => router.push('/profile')}>
-                  <User className="w-4 h-4 opacity-70" />
-                  Profile Details
-                </DropdownMenuItem>
-
-                <DropdownMenuItem className="cursor-pointer flex items-center gap-2" disabled>
-                  <Settings className="w-4 h-4 opacity-70" />
-                  Preferences
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={handleLogout}
-                  className="text-destructive focus:bg-destructive/10 cursor-pointer flex items-center gap-2"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Log out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </header>
-
-        {/* Page Content */}
-        <main className="flex-1 bg-muted/5 min-w-0">
-          {children}
-        </main>
-      </div>
+      {/* Page Content */}
+      <main className="flex-1 bg-muted/5 min-w-0">
+        {children}
+      </main>
     </div>
   )
 }

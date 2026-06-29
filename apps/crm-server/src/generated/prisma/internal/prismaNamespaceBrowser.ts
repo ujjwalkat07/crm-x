@@ -17,8 +17,8 @@
 
 import * as runtime from "@prisma/client/runtime/index-browser"
 
-export type * from '../models'
-export type * from './prismaNamespace'
+export type * from '../models.js'
+export type * from './prismaNamespace.js'
 
 export const Decimal = runtime.Decimal
 
@@ -53,7 +53,8 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   User: 'User',
   Lead: 'Lead',
-  CallLog: 'CallLog'
+  CallLog: 'CallLog',
+  Email: 'Email'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -87,7 +88,6 @@ export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof User
 
 export const LeadScalarFieldEnum = {
   id: 'id',
-  assignedToId: 'assignedToId',
   customerName: 'customerName',
   email: 'email',
   phone: 'phone',
@@ -99,7 +99,8 @@ export const LeadScalarFieldEnum = {
   lastContactDate: 'lastContactDate',
   nextFollowUpDate: 'nextFollowUpDate',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  assignedToId: 'assignedToId'
 } as const
 
 export type LeadScalarFieldEnum = (typeof LeadScalarFieldEnum)[keyof typeof LeadScalarFieldEnum]
@@ -116,6 +117,20 @@ export const CallLogScalarFieldEnum = {
 } as const
 
 export type CallLogScalarFieldEnum = (typeof CallLogScalarFieldEnum)[keyof typeof CallLogScalarFieldEnum]
+
+
+export const EmailScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  to: 'to',
+  toName: 'toName',
+  from: 'from',
+  subject: 'subject',
+  htmlBody: 'htmlBody',
+  sentAt: 'sentAt'
+} as const
+
+export type EmailScalarFieldEnum = (typeof EmailScalarFieldEnum)[keyof typeof EmailScalarFieldEnum]
 
 
 export const SortOrder = {

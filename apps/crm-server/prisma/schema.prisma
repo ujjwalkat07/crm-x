@@ -18,6 +18,7 @@ model User {
   updatedAt    DateTime  @updatedAt
   callLogs     CallLog[]
   leads        Lead[]    @relation("AssignedLeads")
+  emails       Email[]
 }
 
 model Lead {
@@ -70,4 +71,16 @@ enum CallStatus {
   NO_ANSWER
   CALLBACK_REQUESTED
   VOICEMAIL
+}
+
+model Email {
+  id        String   @id @default(uuid())
+  userId    String
+  to        String
+  toName    String?
+  from      String
+  subject   String
+  htmlBody  String
+  sentAt    DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
 }

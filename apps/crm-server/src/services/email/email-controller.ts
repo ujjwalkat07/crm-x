@@ -2,10 +2,11 @@ import { Response } from "express";
 import { AuthRequest } from "../../middleware/jwt-verify";
 import nodemailer from "nodemailer";
 import { config } from "../../config/env-config/config";
+import { prisma } from "../../lib/prisma";
 
 const NVIDIA_BASE_URL = "https://integrate.api.nvidia.com/v1";
 
-// ── Controller: AI Generate Email ──────────────────────────────────────
+// ── Controller: AI Generate Email 
 export const aiGenerateEmail = async (
   req: AuthRequest,
   res: Response
@@ -86,7 +87,7 @@ Return ONLY the JSON object.`;
   }
 };
 
-// ── Controller: Send Email via SMTP ────────────────────────────────────
+// ── Controller: Send Email via SMTP 
 export const sendEmail = async (
   req: AuthRequest,
   res: Response
@@ -128,6 +129,20 @@ export const sendEmail = async (
       html: htmlBody,
     });
 
+    // Save email record to database if user is authenticated
+    if (req.user?.id) {
+      await prisma.email.create({
+        data: {
+          userId: req.user.id,
+          to,
+          toName: toName || null,
+          from: fromAddress || "",
+          subject,
+          htmlBody,
+        },
+      });
+    }
+
     return res.status(200).json({
       success: true,
       messageId: info.messageId,
@@ -137,6 +152,37 @@ export const sendEmail = async (
     console.error("sendEmail error:", error);
     return res.status(500).json({
       message: error?.message ?? "Failed to send email. Check your SMTP credentials.",
+    });
+  }
+};
+
+// ── Controller: Get Sent Emails
+export const getEmails = async (
+  req: AuthRequest,
+  res: Response
+): Promise<Response> => {
+  try {
+    if (!req.user?.id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const emails = await prisma.email.findMany({
+      where: {
+        userId: req.user.id,
+      },
+      orderBy: {
+        sentAt: "desc",
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: emails,
+    });
+  } catch (error: any) {
+    console.error("getEmails error:", error);
+    return res.status(500).json({
+      message: "Internal server error while retrieving emails.",
     });
   }
 };

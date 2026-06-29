@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { aiGenerateEmail, sendEmail } from "./email-controller";
+import { aiGenerateEmail, sendEmail, getEmails } from "./email-controller";
 import { verifyJWT } from "../../middleware/jwt-verify";
 
 const emailRoutes: Router = Router();
@@ -9,5 +9,6 @@ emailRoutes.use(verifyJWT);
 
 emailRoutes.post("/ai-generate", aiGenerateEmail);
 emailRoutes.post("/send", sendEmail);
+emailRoutes.get("/", getEmails);
 
 export { emailRoutes };
