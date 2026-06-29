@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { Response as ExpressResponse } from "express";
 import { AuthRequest } from "../../middleware/jwt-verify";
 import nodemailer from "nodemailer";
 import { config } from "../../config/env-config/config";
@@ -9,8 +9,8 @@ const NVIDIA_BASE_URL = "https://integrate.api.nvidia.com/v1";
 // ── Controller: AI Generate Email 
 export const aiGenerateEmail = async (
   req: AuthRequest,
-  res: Response
-): Promise<Response> => {
+  res: ExpressResponse
+): Promise<ExpressResponse> => {
   try {
     const { contactEmail, contactName, userMessage } = req.body;
 
@@ -88,8 +88,8 @@ Return ONLY the JSON object.`;
 // ── Controller: Send Email via SMTP 
 export const sendEmail = async (
   req: AuthRequest,
-  res: Response
-): Promise<Response> => {
+  res: ExpressResponse
+): Promise<ExpressResponse> => {
   try {
     const { to, toName, subject, htmlBody } = req.body;
 
@@ -157,8 +157,8 @@ export const sendEmail = async (
 // ── Controller: Get Sent Emails
 export const getEmails = async (
   req: AuthRequest,
-  res: Response
-): Promise<Response> => {
+  res: ExpressResponse
+): Promise<ExpressResponse> => {
   try {
     if (!req.user?.id) {
       return res.status(401).json({ message: "Unauthorized" });
