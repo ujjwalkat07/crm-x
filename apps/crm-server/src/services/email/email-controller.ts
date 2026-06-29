@@ -33,7 +33,7 @@ The email should be professional, polished, and appropriately signed off.
 Do NOT include any other text, explanation, or markdown outside the JSON object.
 Return ONLY the JSON object.`;
 
-    const response = await fetch(`${NVIDIA_BASE_URL}/chat/completions`, {
+    const response = (await fetch(`${NVIDIA_BASE_URL}/chat/completions`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -50,7 +50,8 @@ Return ONLY the JSON object.`;
         max_tokens: 1024,
         stream: false,
       }),
-    });
+    })) as any;
+
 
     if (!response.ok) {
       const errText = await response.text();
