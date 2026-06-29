@@ -63,8 +63,6 @@ Return ONLY the JSON object.`;
     const data: any = await response.json();
     const rawText: string = data.choices?.[0]?.message?.content ?? "";
 
-    console.log("Raw text:", rawText);
-
     let subject = "";
     let htmlBody = "";
     try {

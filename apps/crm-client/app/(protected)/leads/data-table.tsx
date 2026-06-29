@@ -91,7 +91,6 @@ export function DataTable<TData, TValue>({
         lastSeen: lead.lastContactDate || new Date().toISOString(),
         nextFollowUp: lead.nextFollowUpDate || new Date().toISOString(),
       }))
-      console.log(fetchedData)
       setLocalData(mappedLeads)
     } catch (err) {
       if (axios.isAxiosError(err)) {
