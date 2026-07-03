@@ -34,7 +34,13 @@ type ToolbarButtonProps = {
   children: React.ReactNode;
 };
 
-function ToolbarButton({ onClick, active, disabled, title, children }: ToolbarButtonProps) {
+function ToolbarButton({
+  onClick,
+  active,
+  disabled,
+  title,
+  children,
+}: ToolbarButtonProps) {
   return (
     <button
       type="button"
@@ -42,9 +48,10 @@ function ToolbarButton({ onClick, active, disabled, title, children }: ToolbarBu
       disabled={disabled}
       title={title}
       className={`flex items-center justify-center w-7 h-7 rounded transition-all text-xs font-bold
-        ${active
-          ? "bg-foreground text-background"
-          : "text-muted-foreground hover:text-foreground hover:bg-muted"
+        ${
+          active
+            ? "bg-foreground text-background"
+            : "text-muted-foreground hover:text-foreground hover:bg-muted"
         }
         ${disabled ? "opacity-30 cursor-not-allowed" : "cursor-pointer"}
       `}
@@ -58,7 +65,11 @@ function Divider() {
   return <div className="w-px h-5 bg-border mx-0.5 shrink-0" />;
 }
 
-export default function RichTextEditor({ content, onChange, placeholder }: Props) {
+export default function RichTextEditor({
+  content,
+  onChange,
+  placeholder,
+}: Props) {
   const editor = useEditor({
     extensions: [
       StarterKit.configure({ heading: { levels: [1, 2, 3] } }),

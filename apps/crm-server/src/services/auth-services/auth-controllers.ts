@@ -250,7 +250,10 @@ const genrateNewAccessAndRefreshToken = async (req: Request, res: Response) => {
         .status(error.statusCode)
         .json(new ApiResponse(error.statusCode, null, error.message));
     }
-    if (error?.name === "JsonWebTokenError" || error?.name === "TokenExpiredError") {
+    if (
+      error?.name === "JsonWebTokenError" ||
+      error?.name === "TokenExpiredError"
+    ) {
       return res
         .status(400)
         .json(new ApiResponse(400, null, "invalid or expired refresh token"));
@@ -303,7 +306,10 @@ const verifyJWTToken: RequestHandler = async (
         .status(error.statusCode)
         .json(new ApiResponse(error.statusCode, null, error.message));
     }
-    if (error?.name === "JsonWebTokenError" || error?.name === "TokenExpiredError") {
+    if (
+      error?.name === "JsonWebTokenError" ||
+      error?.name === "TokenExpiredError"
+    ) {
       return res
         .status(400)
         .json(new ApiResponse(400, null, "token invalid or expired"));
@@ -358,7 +364,7 @@ const updateProfileController = async (req: AuthRequest, res: Response) => {
 
     // Generate new tokens with updated user details
     const { accessToken, refreshToken } = await getAccessAndRefreshToken(
-      String(updatedUser.id)
+      String(updatedUser.id),
     );
 
     return res
@@ -378,7 +384,7 @@ const updateProfileController = async (req: AuthRequest, res: Response) => {
           HttpCodes.OK,
           publicUser,
           "Profile updated successfully",
-        )
+        ),
       );
   } catch (error) {
     if (error instanceof ApiErrorHandling) {
@@ -393,7 +399,7 @@ const updateProfileController = async (req: AuthRequest, res: Response) => {
           HttpCodes.INTERNAL_SERVER_ERROR,
           null,
           "Internal Server Error",
-        )
+        ),
       );
   }
 };
@@ -405,4 +411,4 @@ export {
   genrateNewAccessAndRefreshToken,
   verifyJWTToken,
   updateProfileController,
-};
+};

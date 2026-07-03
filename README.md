@@ -11,6 +11,7 @@ Designed with **rich aesthetics**, the dashboard features beautiful glassmorphis
 ## 🛠️ Tech Stack
 
 ### Client (`apps/crm-client`)
+
 - **Framework**: Next.js 16 (App Router, Client Components)
 - **Styling**: Tailwind CSS & custom glassmorphism systems
 - **Animations**: Framer Motion (staggered listings, springs, and exit animations)
@@ -18,11 +19,13 @@ Designed with **rich aesthetics**, the dashboard features beautiful glassmorphis
 - **Notifications**: React-Toastify
 
 ### Server (`apps/crm-server`)
+
 - **Runtime**: Node.js
 - **Framework**: Express API services
 - **Database Utilities**: Custom schema routing
 
 ### Packages (`packages/*`)
+
 - **Shared UI**: Custom React element component stubs (`@repo/ui`)
 - **Linter & Configurations**: ESLint and TypeScript configs (`@repo/eslint-config`, `@repo/typescript-config`)
 
@@ -53,13 +56,13 @@ npm install -g pnpm
 
 The platform utilizes **Turborepo** to orchestrate workspace pipeline commands:
 
-| Command | Action |
-| :--- | :--- |
-| `pnpm run dev` | Spins up the client (`:3000`) and server (`:5000`) development instances concurrently |
-| `pnpm run build` | Compiles production bundles for all applications and packages |
-| `pnpm run lint` | Runs ESLint checks across the entire codebase |
-| `pnpm run check-types` | Executes TypeScript typechecks in every application and package workspace |
-| `pnpm run format` | Runs Prettier to format markdown, typescript, and styling code |
+| Command                | Action                                                                                |
+| :--------------------- | :------------------------------------------------------------------------------------ |
+| `pnpm run dev`         | Spins up the client (`:3000`) and server (`:5000`) development instances concurrently |
+| `pnpm run build`       | Compiles production bundles for all applications and packages                         |
+| `pnpm run lint`        | Runs ESLint checks across the entire codebase                                         |
+| `pnpm run check-types` | Executes TypeScript typechecks in every application and package workspace             |
+| `pnpm run format`      | Runs Prettier to format markdown, typescript, and styling code                        |
 
 ---
 

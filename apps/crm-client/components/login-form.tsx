@@ -1,12 +1,12 @@
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   Field,
   FieldDescription,
@@ -14,8 +14,8 @@ import {
   FieldLabel,
   FieldSeparator,
   FieldError,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { useRouter } from "next/dist/client/components/navigation";
 import { useState } from "react";
 import { api } from "@/lib/axios";
@@ -26,7 +26,6 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -61,12 +60,15 @@ export function LoginForm({
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Welcome back</CardTitle>
-          <CardDescription>
-            Login with your Google account
-          </CardDescription>
+          <CardDescription>Login with your Google account</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={(e) => { e.preventDefault(); LoginHandler(); }}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              LoginHandler();
+            }}
+          >
             <FieldGroup>
               {error && (
                 <FieldError className="text-center font-medium bg-destructive/10 p-3 rounded-md border border-destructive/20">
@@ -122,7 +124,8 @@ export function LoginForm({
                   {loading ? "Logging in..." : "Login"}
                 </Button>
                 <FieldDescription className="text-center">
-                  Don&apos;t have an account? <Link href="/signup">Sign up</Link>
+                  Don&apos;t have an account?{" "}
+                  <Link href="/signup">Sign up</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>
@@ -134,5 +137,5 @@ export function LoginForm({
         and <a href="#">Privacy Policy</a>.
       </FieldDescription>
     </div>
-  )
+  );
 }

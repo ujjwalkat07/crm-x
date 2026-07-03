@@ -22,5 +22,3 @@ authRoutes.post("/verify-token", verifyJWTToken);
 authRoutes.put("/profile", verifyJWT, updateProfileController);
 
 export { authRoutes };
-
-

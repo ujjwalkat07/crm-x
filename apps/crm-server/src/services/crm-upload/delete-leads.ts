@@ -4,7 +4,7 @@ import { prisma } from "../../lib/prisma";
 
 export const deleteLead = async (
   req: AuthRequest,
-  res: Response
+  res: Response,
 ): Promise<Response> => {
   try {
     const { id } = req.params as { id: string };

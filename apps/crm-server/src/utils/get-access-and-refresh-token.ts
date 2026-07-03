@@ -19,7 +19,7 @@ const getAccessAndRefreshToken = async (userId: string) => {
     }
     throw new ApiErrorHandling(
       HttpCodes.INTERNAL_SERVER_ERROR,
-      "Internal Server Error"
+      "Internal Server Error",
     );
   }
 };

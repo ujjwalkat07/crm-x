@@ -1,4 +1,3 @@
-
 export interface CreateLeadBody {
   customerName: string;
   email?: string;

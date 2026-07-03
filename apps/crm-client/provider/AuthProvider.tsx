@@ -1,9 +1,15 @@
-'use client'
+"use client";
 
-import { api } from '@/lib/axios';
-import axios from 'axios';
-import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react'
-
+import { api } from "@/lib/axios";
+import axios from "axios";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+  ReactNode,
+} from "react";
 
 interface SessionPayload {
   id: string;
@@ -15,10 +21,10 @@ interface SessionPayload {
 }
 
 interface AuthContextType {
-  user: SessionPayload | null
-  isLoading: boolean
-  isAuthenticated: boolean
-  refreshUser: () => Promise<void>
+  user: SessionPayload | null;
+  isLoading: boolean;
+  isAuthenticated: boolean;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -26,18 +32,22 @@ const AuthContext = createContext<AuthContextType>({
   isLoading: true,
   isAuthenticated: false,
   refreshUser: async () => {},
-})
+});
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<SessionPayload | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [user, setUser] = useState<SessionPayload | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
   const checkSession = useCallback(async () => {
     try {
-      const response = await api.post("/api/auth/verify-token", {}, {
-        withCredentials: true,
-      });
+      const response = await api.post(
+        "/api/auth/verify-token",
+        {},
+        {
+          withCredentials: true,
+        },
+      );
 
       setUser(response.data);
     } catch (error) {
@@ -49,26 +59,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setError("Something went wrong. Please try again.");
       }
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    checkSession()
-  }, [checkSession])
-
+    checkSession();
+  }, [checkSession]);
 
   return (
-    <AuthContext.Provider value={{
-      user,
-      isLoading,
-      isAuthenticated: !!user,
-      refreshUser: checkSession,
-    }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isLoading,
+        isAuthenticated: !!user,
+        refreshUser: checkSession,
+      }}
+    >
       {children}
     </AuthContext.Provider>
-  )
+  );
 }
 
-
-export const useAuth = () => useContext(AuthContext)
+export const useAuth = () => useContext(AuthContext);

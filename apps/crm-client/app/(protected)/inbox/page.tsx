@@ -12,7 +12,7 @@ import {
   Inbox,
   Send,
   ExternalLink,
-  ChevronRight
+  ChevronRight,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -35,7 +35,7 @@ export default function InboxPage() {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedEmail, setSelectedEmail] = useState<Email | null>(null);
-  
+
   // Mobile navigation helper: if true, show detail view on mobile
   const [showMobileDetail, setShowMobileDetail] = useState(false);
 
@@ -58,9 +58,11 @@ export default function InboxPage() {
     fetchEmails();
   }, []);
 
-
   const getSnippet = (html: string) => {
-    const text = html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+    const text = html
+      .replace(/<[^>]*>/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
     return text.length > 60 ? text.slice(0, 60) + "..." : text;
   };
 
@@ -88,7 +90,9 @@ export default function InboxPage() {
       <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
         <div className="text-center space-y-3">
           <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
-          <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Loading Outbox…</p>
+          <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">
+            Loading Outbox…
+          </p>
         </div>
       </div>
     );
@@ -96,9 +100,8 @@ export default function InboxPage() {
 
   return (
     <div className="h-[calc(100vh-4rem)] flex flex-col md:flex-row overflow-hidden bg-background">
-      
       {/* ── LEFT PANE: EMAIL LIST ── */}
-      <div 
+      <div
         className={`w-full md:w-[380px] lg:w-[420px] border-r border-border flex flex-col h-full shrink-0 ${
           showMobileDetail ? "hidden md:flex" : "flex"
         }`}
@@ -138,9 +141,13 @@ export default function InboxPage() {
                 <Inbox className="w-6 h-6" />
               </div>
               <div className="space-y-1">
-                <p className="text-sm font-bold text-foreground">No emails found</p>
+                <p className="text-sm font-bold text-foreground">
+                  No emails found
+                </p>
                 <p className="text-xs text-muted-foreground max-w-[240px] mx-auto leading-relaxed">
-                  {searchQuery ? "Try resetting your search filters." : "You haven't sent any emails yet using the CRM AI Composer."}
+                  {searchQuery
+                    ? "Try resetting your search filters."
+                    : "You haven't sent any emails yet using the CRM AI Composer."}
                 </p>
               </div>
             </div>
@@ -183,14 +190,14 @@ export default function InboxPage() {
       </div>
 
       {/* ── RIGHT PANE: EMAIL DETAIL ── */}
-      <div 
+      <div
         className={`flex-1 flex flex-col h-full bg-card/10 ${
           showMobileDetail ? "flex" : "hidden md:flex"
         }`}
       >
         <AnimatePresence mode="wait">
           {selectedEmail ? (
-            <motion.div 
+            <motion.div
               key={selectedEmail.id}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
@@ -214,10 +221,14 @@ export default function InboxPage() {
                     </h2>
                     <p className="text-[10px] text-muted-foreground flex items-center gap-1.5 mt-0.5">
                       <Calendar className="w-3 h-3" />
-                      Sent {new Date(selectedEmail.sentAt).toLocaleString(undefined, {
-                        dateStyle: "medium",
-                        timeStyle: "short",
-                      })}
+                      Sent{" "}
+                      {new Date(selectedEmail.sentAt).toLocaleString(
+                        undefined,
+                        {
+                          dateStyle: "medium",
+                          timeStyle: "short",
+                        },
+                      )}
                     </p>
                   </div>
                 </div>
@@ -227,7 +238,8 @@ export default function InboxPage() {
               <div className="px-6 py-4 border-b border-border/40 bg-muted/10 shrink-0 flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground border border-border flex items-center justify-center font-bold text-sm shrink-0">
-                    {(selectedEmail.toName || selectedEmail.to)?.[0]?.toUpperCase() || "?"}
+                    {(selectedEmail.toName ||
+                      selectedEmail.to)?.[0]?.toUpperCase() || "?"}
                   </div>
                   <div className="min-w-0">
                     <p className="text-xs font-bold text-foreground">
@@ -249,7 +261,7 @@ export default function InboxPage() {
               <div className="flex-1 overflow-y-auto px-6 py-6 bg-background">
                 <div className="max-w-2xl mx-auto rounded-xl border border-border bg-card p-6 lg:p-8 shadow-xs">
                   {/* HTML Body display */}
-                  <div 
+                  <div
                     className="prose prose-sm dark:prose-invert max-w-none text-xs text-foreground/90 space-y-4"
                     dangerouslySetInnerHTML={{ __html: selectedEmail.htmlBody }}
                   />
@@ -263,9 +275,12 @@ export default function InboxPage() {
                   <Mail className="w-5 h-5" />
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm font-bold text-foreground">No Email Selected</p>
+                  <p className="text-sm font-bold text-foreground">
+                    No Email Selected
+                  </p>
                   <p className="text-xs text-muted-foreground max-w-xs leading-relaxed">
-                    Select a correspondence from the list on the left to read the full thread contents.
+                    Select a correspondence from the list on the left to read
+                    the full thread contents.
                   </p>
                 </div>
               </div>

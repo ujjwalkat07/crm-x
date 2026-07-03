@@ -1,18 +1,18 @@
-'use client'
+"use client";
 
-import React from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { AlertTriangle, X } from 'lucide-react'
-import { Button } from './button'
+import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { AlertTriangle, X } from "lucide-react";
+import { Button } from "./button";
 
 interface ConfirmModalProps {
-  isOpen: boolean
-  title: string
-  message: string
-  confirmText?: string
-  cancelText?: string
-  onConfirm: () => void
-  onCancel: () => void
+  isOpen: boolean;
+  title: string;
+  message: string;
+  confirmText?: string;
+  cancelText?: string;
+  onConfirm: () => void;
+  onCancel: () => void;
 }
 
 export function ConfirmModal({
@@ -22,7 +22,7 @@ export function ConfirmModal({
   confirmText = "Confirm",
   cancelText = "Cancel",
   onConfirm,
-  onCancel
+  onCancel,
 }: ConfirmModalProps) {
   return (
     <AnimatePresence>
@@ -42,7 +42,7 @@ export function ConfirmModal({
             initial={{ opacity: 0, scale: 0.95, y: 15 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            transition={{ type: 'spring', duration: 0.3 }}
+            transition={{ type: "spring", duration: 0.3 }}
             className="relative bg-card text-card-foreground border border-border shadow-2xl rounded-2xl p-6 max-w-md w-full mx-4 z-10 animate-in zoom-in-95 duration-200"
           >
             {/* Close Button */}
@@ -91,5 +91,5 @@ export function ConfirmModal({
         </div>
       )}
     </AnimatePresence>
-  )
+  );
 }

@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { ForgotPasswordForm } from "@/components/forgot-password-form"
-import { GalleryVerticalEndIcon } from "lucide-react"
+import { ForgotPasswordForm } from "@/components/forgot-password-form";
+import { GalleryVerticalEndIcon } from "lucide-react";
 
 export default function ForgotPasswordPage() {
   return (
@@ -16,5 +16,5 @@ export default function ForgotPasswordPage() {
         <ForgotPasswordForm />
       </div>
     </div>
-  )
+  );
 }

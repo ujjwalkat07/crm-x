@@ -36,7 +36,7 @@ interface UserRecord {
   refreshToken: string | null;
   createdAt: Date;
   updatedAt: Date;
-};
+}
 
 const toAuthDocument = (user: UserRecord): AuthDocument => ({
   id: user.id,
@@ -118,13 +118,13 @@ export class Auth {
 
     return user
       ? {
-        id: user.id,
-        fullName: user.fullName,
-        fullname: user.fullName,
-        email: user.email,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
-      }
+          id: user.id,
+          fullName: user.fullName,
+          fullname: user.fullName,
+          email: user.email,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+        }
       : null;
   }
 
@@ -148,7 +148,7 @@ export class Auth {
 
   static async updateProfile(
     id: string,
-    data: { fullName?: string; email?: string; password?: string }
+    data: { fullName?: string; email?: string; password?: string },
   ) {
     const updateData: any = {};
     if (data.fullName !== undefined) {
@@ -169,4 +169,3 @@ export class Auth {
     return toAuthDocument(user);
   }
 }
-

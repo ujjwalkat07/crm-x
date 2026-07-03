@@ -12,7 +12,10 @@ export const formatRelativeDate = (dateString: string) => {
     if (diffHours < 24) return `${diffHours}h ago`;
     if (diffDays === 1) return "Yesterday";
     if (diffDays < 7) return `${diffDays}d ago`;
-    return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+    return date.toLocaleDateString(undefined, {
+      month: "short",
+      day: "numeric",
+    });
   } catch {
     return "";
   }

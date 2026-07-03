@@ -1,20 +1,20 @@
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   Field,
   FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { useRouter } from "next/dist/client/components/navigation";
 import { useState } from "react";
 import { api } from "@/lib/axios";
@@ -25,7 +25,6 @@ export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -70,7 +69,12 @@ export function SignupForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={(e) => { e.preventDefault(); SignupHandler(); }}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              SignupHandler();
+            }}
+          >
             <FieldGroup>
               {error && (
                 <FieldError className="text-center font-medium bg-destructive/10 p-3 rounded-md border border-destructive/20">
@@ -79,7 +83,13 @@ export function SignupForm({
               )}
               <Field>
                 <FieldLabel htmlFor="name">Full Name</FieldLabel>
-                <Input id="name" type="text" placeholder="John Doe" required onChange={(e) => setfullName(e.target.value)} />
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="John Doe"
+                  required
+                  onChange={(e) => setfullName(e.target.value)}
+                />
               </Field>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -95,13 +105,23 @@ export function SignupForm({
                 <Field className="grid grid-cols-2 gap-4">
                   <Field>
                     <FieldLabel htmlFor="password">Password</FieldLabel>
-                    <Input id="password" type="password" required onChange={(e) => setPassword(e.target.value)} />
+                    <Input
+                      id="password"
+                      type="password"
+                      required
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
                   </Field>
                   <Field>
                     <FieldLabel htmlFor="confirm-password">
                       Confirm Password
                     </FieldLabel>
-                    <Input id="confirm-password" type="password" required onChange={(e) => setConfirmPassword(e.target.value)} />
+                    <Input
+                      id="confirm-password"
+                      type="password"
+                      required
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
                   </Field>
                 </Field>
                 <FieldDescription>
@@ -109,7 +129,9 @@ export function SignupForm({
                 </FieldDescription>
               </Field>
               <Field>
-                <Button type="submit" disabled={loading}>{loading ? "Logging in..." : "Create Account"}</Button>
+                <Button type="submit" disabled={loading}>
+                  {loading ? "Logging in..." : "Create Account"}
+                </Button>
                 <FieldDescription className="text-center">
                   Already have an account? <Link href="/login">Sign in</Link>
                 </FieldDescription>
@@ -123,5 +145,5 @@ export function SignupForm({
         and <a href="#">Privacy Policy</a>.
       </FieldDescription>
     </div>
-  )
+  );
 }

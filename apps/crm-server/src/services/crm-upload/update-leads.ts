@@ -5,7 +5,7 @@ import { CreateLeadBody } from "../../types/types";
 
 export const updateLead = async (
   req: AuthRequest,
-  res: Response
+  res: Response,
 ): Promise<Response> => {
   try {
     const { id } = req.params as { id: string };

@@ -1,4 +1,4 @@
-import { Response} from "express";
+import { Response } from "express";
 import { AuthRequest } from "../../middleware/jwt-verify";
 import nodemailer from "nodemailer";
 import { config } from "../../config/env-config/config";
@@ -6,21 +6,22 @@ import { prisma } from "../../lib/prisma";
 
 const NVIDIA_BASE_URL = "https://integrate.api.nvidia.com/v1";
 
-// ── Controller: AI Generate Email 
+// ── Controller: AI Generate Email
 export const aiGenerateEmail = async (
   req: AuthRequest,
-  res: Response
+  res: Response,
 ): Promise<Response> => {
   try {
     const { contactEmail, contactName, userMessage } = req.body;
 
     if (!userMessage || !contactEmail) {
       return res.status(400).json({
-        message: "Missing required fields: contactEmail and userMessage are required.",
+        message:
+          "Missing required fields: contactEmail and userMessage are required.",
       });
     }
 
-    const nvidiaKey = config.NVIDIA_API_KEY
+    const nvidiaKey = config.NVIDIA_API_KEY;
 
     const systemPrompt = `You are an email drafting assistant inside CRM-X, a professional CRM platform.
 The recipient is: ${contactName} <${contactEmail}>.
@@ -52,7 +53,6 @@ Return ONLY the JSON object.`;
       }),
     });
 
-
     if (!response.ok) {
       const errText = await response.text();
       console.error("NVIDIA API error:", errText);
@@ -68,7 +68,10 @@ Return ONLY the JSON object.`;
     let htmlBody = "";
     try {
       // Strip markdown code fences if model wrapped the JSON
-      const cleaned = rawText.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "").trim();
+      const cleaned = rawText
+        .replace(/^```(?:json)?\s*/i, "")
+        .replace(/\s*```$/, "")
+        .trim();
       const parsed = JSON.parse(cleaned);
       subject = parsed.subject ?? "";
       htmlBody = parsed.htmlBody ?? parsed.body ?? rawText;
@@ -77,7 +80,6 @@ Return ONLY the JSON object.`;
     }
 
     return res.status(200).json({ subject, htmlBody });
-
   } catch (error: unknown) {
     console.error("aiGenerateEmail error:", error);
     return res.status(500).json({
@@ -86,17 +88,18 @@ Return ONLY the JSON object.`;
   }
 };
 
-// ── Controller: Send Email via SMTP 
+// ── Controller: Send Email via SMTP
 export const sendEmail = async (
   req: AuthRequest,
-  res: Response
+  res: Response,
 ): Promise<Response> => {
   try {
     const { to, toName, subject, htmlBody } = req.body;
 
     if (!to || !subject || !htmlBody) {
       return res.status(400).json({
-        message: "Missing required fields: to, subject, and htmlBody are required.",
+        message:
+          "Missing required fields: to, subject, and htmlBody are required.",
       });
     }
 
@@ -146,11 +149,11 @@ export const sendEmail = async (
       success: true,
       messageId: info.messageId,
     });
-
   } catch (error: any) {
     console.error("sendEmail error:", error);
     return res.status(500).json({
-      message: error?.message ?? "Failed to send email. Check your SMTP credentials.",
+      message:
+        error?.message ?? "Failed to send email. Check your SMTP credentials.",
     });
   }
 };
@@ -158,7 +161,7 @@ export const sendEmail = async (
 // ── Controller: Get Sent Emails
 export const getEmails = async (
   req: AuthRequest,
-  res: Response
+  res: Response,
 ): Promise<Response> => {
   try {
     if (!req.user?.id) {
@@ -185,4 +188,3 @@ export const getEmails = async (
     });
   }
 };
-

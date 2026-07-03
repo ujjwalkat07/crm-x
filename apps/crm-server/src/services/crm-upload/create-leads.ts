@@ -5,7 +5,7 @@ import { CreateLeadBody } from "../../types/types";
 
 export const createLead = async (
   req: AuthRequest,
-  res: Response
+  res: Response,
 ): Promise<Response> => {
   try {
     const userId = req.user?.id;
@@ -46,9 +46,8 @@ export const createLead = async (
       message: "Lead created successfully",
       createdBy: userId,
       data: lead,
-      lead
+      lead,
     });
-
   } catch (error: unknown) {
     return res.status(500).json({
       message: "Internal server error",

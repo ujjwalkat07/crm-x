@@ -1,10 +1,10 @@
-'use client'
+"use client";
 
-import { useAuth } from '../../../provider/AuthProvider'
-import { api } from '@/lib/axios'
-import { useState, useEffect } from 'react'
-import axios from 'axios'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useAuth } from "../../../provider/AuthProvider";
+import { api } from "@/lib/axios";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   User as UserIcon,
   Lock,
@@ -15,139 +15,144 @@ import {
   AlertCircle,
   Sparkles,
   KeyRound,
-  Fingerprint
-} from 'lucide-react'
-import { Button } from '@/components/ui/button'
+  Fingerprint,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
+} from "@/components/ui/card";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 
 export default function ProfilePage() {
-  const { user, refreshUser } = useAuth()
-  const [activeTab, setActiveTab] = useState<'details' | 'security'>('details')
-  
+  const { user, refreshUser } = useAuth();
+  const [activeTab, setActiveTab] = useState<"details" | "security">("details");
+
   // Profile Details Form State
-  const [fullName, setFullName] = useState('')
-  const [email, setEmail] = useState('')
-  const [detailsError, setDetailsError] = useState('')
-  const [detailsSuccess, setDetailsSuccess] = useState('')
-  const [detailsLoading, setDetailsLoading] = useState(false)
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [detailsError, setDetailsError] = useState("");
+  const [detailsSuccess, setDetailsSuccess] = useState("");
+  const [detailsLoading, setDetailsLoading] = useState(false);
 
   // Security Form State
-  const [newPassword, setNewPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [securityError, setSecurityError] = useState('')
-  const [securitySuccess, setSecuritySuccess] = useState('')
-  const [securityLoading, setSecurityLoading] = useState(false)
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [securityError, setSecurityError] = useState("");
+  const [securitySuccess, setSecuritySuccess] = useState("");
+  const [securityLoading, setSecurityLoading] = useState(false);
 
   // Pre-fill user data when loaded
   useEffect(() => {
     if (user) {
-      setFullName(user.fullName || user.fullname || '')
-      setEmail(user.email || '')
+      setFullName(user.fullName || user.fullname || "");
+      setEmail(user.email || "");
     }
-  }, [user])
+  }, [user]);
 
-  if (!user) return null
+  if (!user) return null;
 
   // User initials
   const initials = fullName
-    .split(' ')
+    .split(" ")
     .map((n) => n[0])
-    .join('')
+    .join("")
     .slice(0, 2)
-    .toUpperCase()
+    .toUpperCase();
 
   const handleUpdateDetails = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setDetailsError('')
-    setDetailsSuccess('')
+    e.preventDefault();
+    setDetailsError("");
+    setDetailsSuccess("");
 
     if (!fullName.trim() || !email.trim()) {
-      setDetailsError('All fields are required.')
-      return
+      setDetailsError("All fields are required.");
+      return;
     }
 
-    setDetailsLoading(true)
+    setDetailsLoading(true);
     try {
-      await api.put('/api/auth/profile', {
+      await api.put("/api/auth/profile", {
         fullName: fullName.trim(),
         email: email.trim(),
-      })
-      await refreshUser()
-      setDetailsSuccess('Profile details updated successfully.')
+      });
+      await refreshUser();
+      setDetailsSuccess("Profile details updated successfully.");
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        setDetailsError(err.response?.data?.message || 'Failed to update details. Please try again.')
+        setDetailsError(
+          err.response?.data?.message ||
+            "Failed to update details. Please try again.",
+        );
       } else {
-        setDetailsError('Something went wrong. Please try again.')
+        setDetailsError("Something went wrong. Please try again.");
       }
     } finally {
-      setDetailsLoading(false)
+      setDetailsLoading(false);
     }
-  }
+  };
 
   const handleUpdatePassword = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setSecurityError('')
-    setSecuritySuccess('')
+    e.preventDefault();
+    setSecurityError("");
+    setSecuritySuccess("");
 
     if (!newPassword || !confirmPassword) {
-      setSecurityError('Please enter and confirm your new password.')
-      return
+      setSecurityError("Please enter and confirm your new password.");
+      return;
     }
 
     if (newPassword.length < 6) {
-      setSecurityError('Password must be at least 6 characters long.')
-      return
+      setSecurityError("Password must be at least 6 characters long.");
+      return;
     }
 
     if (newPassword !== confirmPassword) {
-      setSecurityError('Passwords do not match.')
-      return
+      setSecurityError("Passwords do not match.");
+      return;
     }
 
-    setSecurityLoading(true)
+    setSecurityLoading(true);
     try {
-      await api.put('/api/auth/profile', {
+      await api.put("/api/auth/profile", {
         password: newPassword,
-      })
-      setNewPassword('')
-      setConfirmPassword('')
-      setSecuritySuccess('Password updated successfully.')
+      });
+      setNewPassword("");
+      setConfirmPassword("");
+      setSecuritySuccess("Password updated successfully.");
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        setSecurityError(err.response?.data?.message || 'Failed to update password. Please try again.')
+        setSecurityError(
+          err.response?.data?.message ||
+            "Failed to update password. Please try again.",
+        );
       } else {
-        setSecurityError('Something went wrong. Please try again.')
+        setSecurityError("Something went wrong. Please try again.");
       }
     } finally {
-      setSecurityLoading(false)
+      setSecurityLoading(false);
     }
-  }
+  };
 
   const formattedJoinedDate = user.createdAt
-    ? new Date(user.createdAt).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
+    ? new Date(user.createdAt).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
       })
-    : 'Unknown'
+    : "Unknown";
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 md:py-12 space-y-8 animate-in fade-in duration-300">
-      
       {/* Header section with page title */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
@@ -155,29 +160,28 @@ export default function ProfilePage() {
             Account Settings
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
-            Manage your profile information, email preferences, and password security.
+            Manage your profile information, email preferences, and password
+            security.
           </p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        
         {/* Profile Card Summary */}
         <div className="md:col-span-1 space-y-6">
           <Card className="relative overflow-hidden border border-border/80 bg-card shadow-xl backdrop-blur-md">
             <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary/60 via-primary to-primary/60" />
             <CardContent className="pt-8 pb-6 flex flex-col items-center text-center">
-              
               <div className="relative w-24 h-24 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center font-bold text-primary text-3xl shadow-inner mb-4">
                 {initials || <UserIcon className="w-10 h-10" />}
                 <span className="absolute bottom-1.5 right-1.5 w-4 h-4 rounded-full bg-emerald-500 border-2 border-card animate-pulse" />
               </div>
 
               <h2 className="text-xl font-bold text-foreground truncate max-w-full">
-                {fullName || 'CRM Member'}
+                {fullName || "CRM Member"}
               </h2>
               <p className="text-sm text-muted-foreground truncate max-w-full mt-1">
-                {email || 'member@crm.com'}
+                {email || "member@crm.com"}
               </p>
 
               <div className="w-full border-t border-border/50 my-6" />
@@ -196,29 +200,28 @@ export default function ProfilePage() {
                   <span className="font-mono truncate">ID: {user.id}</span>
                 </div>
               </div>
-
             </CardContent>
           </Card>
 
           {/* Navigation/Tab Selector */}
           <div className="flex flex-col gap-2">
             <button
-              onClick={() => setActiveTab('details')}
+              onClick={() => setActiveTab("details")}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-left outline-none cursor-pointer ${
-                activeTab === 'details'
-                  ? 'bg-primary text-primary-foreground shadow-md shadow-primary/15'
-                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                activeTab === "details"
+                  ? "bg-primary text-primary-foreground shadow-md shadow-primary/15"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
               }`}
             >
               <UserIcon className="w-4 h-4" />
               <span>Profile Details</span>
             </button>
             <button
-              onClick={() => setActiveTab('security')}
+              onClick={() => setActiveTab("security")}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-left outline-none cursor-pointer ${
-                activeTab === 'security'
-                  ? 'bg-primary text-primary-foreground shadow-md shadow-primary/15'
-                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                activeTab === "security"
+                  ? "bg-primary text-primary-foreground shadow-md shadow-primary/15"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
               }`}
             >
               <Lock className="w-4 h-4" />
@@ -230,13 +233,13 @@ export default function ProfilePage() {
         {/* Edit Panel */}
         <div className="md:col-span-2">
           <AnimatePresence mode="wait">
-            {activeTab === 'details' ? (
+            {activeTab === "details" ? (
               <motion.div
                 key="details-tab"
                 initial={{ opacity: 0, x: 15 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -15 }}
-                transition={{ duration: 0.25, ease: 'easeOut' }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
               >
                 <Card className="border border-border/80 bg-card shadow-xl">
                   <CardHeader>
@@ -274,7 +277,10 @@ export default function ProfilePage() {
                         )}
 
                         <Field className="space-y-2">
-                          <FieldLabel htmlFor="fullName" className="text-sm font-semibold tracking-wide">
+                          <FieldLabel
+                            htmlFor="fullName"
+                            className="text-sm font-semibold tracking-wide"
+                          >
                             Full Name
                           </FieldLabel>
                           <div className="relative">
@@ -292,7 +298,10 @@ export default function ProfilePage() {
                         </Field>
 
                         <Field className="space-y-2">
-                          <FieldLabel htmlFor="email" className="text-sm font-semibold tracking-wide">
+                          <FieldLabel
+                            htmlFor="email"
+                            className="text-sm font-semibold tracking-wide"
+                          >
                             Email Address
                           </FieldLabel>
                           <div className="relative">
@@ -308,7 +317,8 @@ export default function ProfilePage() {
                             />
                           </div>
                           <FieldDescription className="text-xs text-muted-foreground/65">
-                            Note: Changing your email will update your login credentials.
+                            Note: Changing your email will update your login
+                            credentials.
                           </FieldDescription>
                         </Field>
 
@@ -342,7 +352,7 @@ export default function ProfilePage() {
                 initial={{ opacity: 0, x: 15 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -15 }}
-                transition={{ duration: 0.25, ease: 'easeOut' }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
               >
                 <Card className="border border-border/80 bg-card shadow-xl">
                   <CardHeader>
@@ -380,7 +390,10 @@ export default function ProfilePage() {
                         )}
 
                         <Field className="space-y-2">
-                          <FieldLabel htmlFor="newPassword" className="text-sm font-semibold tracking-wide">
+                          <FieldLabel
+                            htmlFor="newPassword"
+                            className="text-sm font-semibold tracking-wide"
+                          >
                             New Password
                           </FieldLabel>
                           <div className="relative">
@@ -398,7 +411,10 @@ export default function ProfilePage() {
                         </Field>
 
                         <Field className="space-y-2">
-                          <FieldLabel htmlFor="confirmPassword" className="text-sm font-semibold tracking-wide">
+                          <FieldLabel
+                            htmlFor="confirmPassword"
+                            className="text-sm font-semibold tracking-wide"
+                          >
                             Confirm Password
                           </FieldLabel>
                           <div className="relative">
@@ -408,7 +424,9 @@ export default function ProfilePage() {
                               type="password"
                               required
                               value={confirmPassword}
-                              onChange={(e) => setConfirmPassword(e.target.value)}
+                              onChange={(e) =>
+                                setConfirmPassword(e.target.value)
+                              }
                               placeholder="Confirm new password"
                               className="pl-10 pr-4 py-2.5 bg-background/50 border border-muted focus-visible:ring-primary/20 focus-visible:border-primary/50 transition-all rounded-lg"
                             />
@@ -442,8 +460,7 @@ export default function ProfilePage() {
             )}
           </AnimatePresence>
         </div>
-
       </div>
     </div>
-  )
+  );
 }

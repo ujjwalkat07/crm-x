@@ -16,7 +16,6 @@ export interface AuthRequest extends Request {
   };
 }
 
-
 const verifyJWT: RequestHandler = async (
   req: AuthRequest,
   res: Response,
@@ -49,7 +48,10 @@ const verifyJWT: RequestHandler = async (
         .json(new ApiResponse(error.statusCode, null, error.message));
     }
 
-    if (error?.name === "JsonWebTokenError" || error?.name === "TokenExpiredError") {
+    if (
+      error?.name === "JsonWebTokenError" ||
+      error?.name === "TokenExpiredError"
+    ) {
       return res
         .status(400)
         .json(new ApiResponse(400, null, "token invalid or expired"));

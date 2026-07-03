@@ -1,71 +1,79 @@
-"use client"
+"use client";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
   FieldError,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { useState } from "react"
-import { api } from "@/lib/axios"
-import axios from "axios"
-import Link from "next/dist/client/link"
-import { motion, AnimatePresence } from "framer-motion"
-import { KeyRound, ArrowLeft, Mail, CheckCircle2, AlertCircle, Sparkles } from "lucide-react"
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { api } from "@/lib/axios";
+import axios from "axios";
+import Link from "next/dist/client/link";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  KeyRound,
+  ArrowLeft,
+  Mail,
+  CheckCircle2,
+  AlertCircle,
+  Sparkles,
+} from "lucide-react";
 
 export function ForgotPasswordForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const [email, setEmail] = useState("")
-  const [error, setError] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (!email) {
-      setError("Please enter your email address.")
-      return
+      setError("Please enter your email address.");
+      return;
     }
 
-    setError("")
-    setLoading(true)
+    setError("");
+    setLoading(true);
 
     try {
       // POST back to crm-server `/api/auth/forgot-password` endpoint
-      await api.post("/api/auth/forgot-password", { email })
-      setSuccess(true)
+      await api.post("/api/auth/forgot-password", { email });
+      setSuccess(true);
     } catch (err) {
       if (axios.isAxiosError(err)) {
         setError(
-          err.response?.data?.message || "User not found or something went wrong."
-        )
+          err.response?.data?.message ||
+            "User not found or something went wrong.",
+        );
       } else {
-        setError("Something went wrong. Please try again.")
+        setError("Something went wrong. Please try again.");
       }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="relative overflow-hidden border border-muted/50 bg-card/65 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:shadow-primary/5 hover:border-muted-foreground/20">
         {/* Sleek top ambient light effect */}
         <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
-        
+
         <AnimatePresence mode="wait">
           {!success ? (
             <motion.div
@@ -83,10 +91,11 @@ export function ForgotPasswordForm({
                   Forgot Password?
                 </CardTitle>
                 <CardDescription className="text-sm text-muted-foreground/80 max-w-[280px] mx-auto mt-1">
-                  Enter your email address and we&apos;ll send you a link to reset your password.
+                  Enter your email address and we&apos;ll send you a link to
+                  reset your password.
                 </CardDescription>
               </CardHeader>
-              
+
               <CardContent className="pt-4">
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <FieldGroup>
@@ -103,7 +112,10 @@ export function ForgotPasswordForm({
 
                     <Field className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <FieldLabel htmlFor="email" className="text-sm font-semibold tracking-wide">
+                        <FieldLabel
+                          htmlFor="email"
+                          className="text-sm font-semibold tracking-wide"
+                        >
                           Email Address
                         </FieldLabel>
                       </div>
@@ -174,17 +186,19 @@ export function ForgotPasswordForm({
                   Link Sent!
                 </CardTitle>
                 <CardDescription className="text-sm text-muted-foreground/80 mt-2">
-                  A password reset link has been successfully dispatched to your email address:
+                  A password reset link has been successfully dispatched to your
+                  email address:
                 </CardDescription>
               </CardHeader>
-              
+
               <CardContent className="pt-2 pb-4 space-y-6">
                 <div className="bg-muted/40 border border-muted px-4 py-3 rounded-lg font-medium text-sm text-foreground break-all shadow-inner">
                   {email}
                 </div>
-                
+
                 <p className="text-xs text-muted-foreground/60 leading-relaxed max-w-[280px] mx-auto">
-                  Please check your inbox (and spam folder) for a message with instructions to reset your account.
+                  Please check your inbox (and spam folder) for a message with
+                  instructions to reset your account.
                 </p>
 
                 <Button
@@ -192,7 +206,10 @@ export function ForgotPasswordForm({
                   variant="outline"
                   className="w-full hover:bg-primary/5 hover:text-primary hover:border-primary/30 transition-all duration-300 font-medium rounded-lg"
                 >
-                  <Link href="/login" className="flex items-center justify-center gap-2">
+                  <Link
+                    href="/login"
+                    className="flex items-center justify-center gap-2"
+                  >
                     <ArrowLeft className="size-4" />
                     <span>Return to Login</span>
                   </Link>
@@ -202,10 +219,10 @@ export function ForgotPasswordForm({
           )}
         </AnimatePresence>
       </Card>
-      
+
       <FieldDescription className="px-6 text-center text-xs text-muted-foreground/50">
         Secured by CRM X Identity and Access Management.
       </FieldDescription>
     </div>
-  )
+  );
 }

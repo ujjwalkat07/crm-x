@@ -4,7 +4,7 @@ import { prisma } from "../../lib/prisma";
 
 export const getAllLeads = async (
   req: AuthRequest,
-  res: Response
+  res: Response,
 ): Promise<Response> => {
   try {
     const userId = req.user?.id;
@@ -35,7 +35,7 @@ export const getAllLeads = async (
 
 export const getLeadById = async (
   req: AuthRequest,
-  res: Response
+  res: Response,
 ): Promise<Response> => {
   try {
     const { id } = req.params as { id: string };

@@ -18,7 +18,9 @@ import {
 import { api } from "@/lib/axios";
 
 // Dynamically import RichTextEditor to avoid SSR issues with Tiptap
-const RichTextEditor = dynamic(() => import("./RichTextEditor"), { ssr: false });
+const RichTextEditor = dynamic(() => import("./RichTextEditor"), {
+  ssr: false,
+});
 
 type Props = {
   contactEmail?: string;
@@ -28,7 +30,11 @@ type Props = {
 
 type SendStatus = "idle" | "sending" | "success" | "error";
 
-export default function GmailPanel({ contactEmail = "", contactName = "", onClose }: Props) {
+export default function GmailPanel({
+  contactEmail = "",
+  contactName = "",
+  onClose,
+}: Props) {
   // Recipient details states
   const [recipientEmail, setRecipientEmail] = useState(contactEmail);
   const [recipientName, setRecipientName] = useState(contactName);
@@ -49,7 +55,7 @@ export default function GmailPanel({ contactEmail = "", contactName = "", onClos
   // Prompt panel visibility
   const [promptOpen, setPromptOpen] = useState(true);
 
-  // ── Generate email with AI 
+  // ── Generate email with AI
   async function handleGenerate() {
     if (!prompt.trim()) return;
     if (!recipientEmail.trim()) {
@@ -79,7 +85,7 @@ export default function GmailPanel({ contactEmail = "", contactName = "", onClos
     }
   }
 
-  // ── Send the email 
+  // ── Send the email
   async function handleSend() {
     if (!recipientEmail.trim()) {
       setSendError("Please specify a recipient email address.");
@@ -107,8 +113,8 @@ export default function GmailPanel({ contactEmail = "", contactName = "", onClos
     }
   }
 
-
-  const isBodyEmpty = !htmlBody || htmlBody === "<p></p>" || htmlBody === "<p><br></p>";
+  const isBodyEmpty =
+    !htmlBody || htmlBody === "<p></p>" || htmlBody === "<p><br></p>";
 
   return (
     <>
@@ -128,7 +134,10 @@ export default function GmailPanel({ contactEmail = "", contactName = "", onClos
         exit={{ opacity: 0, x: 60 }}
         transition={{ duration: 0.28, ease: "easeOut" }}
         className="fixed inset-y-0 right-0 z-50 w-full max-w-[520px] flex flex-col shadow-2xl"
-        style={{ background: "var(--color-card)", borderLeft: "1px solid var(--color-border)" }}
+        style={{
+          background: "var(--color-card)",
+          borderLeft: "1px solid var(--color-border)",
+        }}
       >
         {/* ── Header  */}
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-border shrink-0">
@@ -137,7 +146,9 @@ export default function GmailPanel({ contactEmail = "", contactName = "", onClos
               <Sparkles className="w-4 h-4 text-primary" />
             </div>
             <div>
-              <p className="text-sm font-bold leading-none text-foreground">AI Email Composer</p>
+              <p className="text-sm font-bold leading-none text-foreground">
+                AI Email Composer
+              </p>
               <p className="text-[11px] text-muted-foreground mt-0.5 truncate max-w-[260px]">
                 {contactName} · {contactEmail}
               </p>
@@ -153,7 +164,6 @@ export default function GmailPanel({ contactEmail = "", contactName = "", onClos
 
         {/* ── Scrollable Body  */}
         <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
-
           {/* Success state */}
           <AnimatePresence>
             {sendStatus === "success" && (
@@ -167,9 +177,12 @@ export default function GmailPanel({ contactEmail = "", contactName = "", onClos
                   <CheckCircle2 className="w-7 h-7 text-emerald-500" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-foreground">Email Sent!</p>
+                  <p className="text-sm font-bold text-foreground">
+                    Email Sent!
+                  </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Your email to {recipientName || recipientEmail} was delivered successfully.
+                    Your email to {recipientName || recipientEmail} was
+                    delivered successfully.
                   </p>
                 </div>
                 <button
@@ -201,8 +214,12 @@ export default function GmailPanel({ contactEmail = "", contactName = "", onClos
                     {recipientName?.[0]?.toUpperCase() ?? "?"}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-[11px] font-semibold text-foreground leading-none truncate">{recipientName}</p>
-                    <p className="text-[10px] text-muted-foreground truncate mt-0.5">{recipientEmail}</p>
+                    <p className="text-[11px] font-semibold text-foreground leading-none truncate">
+                      {recipientName}
+                    </p>
+                    <p className="text-[10px] text-muted-foreground truncate mt-0.5">
+                      {recipientEmail}
+                    </p>
                   </div>
                   <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground border border-border rounded px-1.5 py-0.5">
                     To
@@ -237,7 +254,6 @@ export default function GmailPanel({ contactEmail = "", contactName = "", onClos
                 </div>
               )}
 
-
               {/* AI Prompt Panel */}
               <div className="rounded-xl border border-border bg-muted/20 overflow-hidden">
                 <button
@@ -248,9 +264,11 @@ export default function GmailPanel({ contactEmail = "", contactName = "", onClos
                     <Wand2 className="w-3.5 h-3.5 text-primary" />
                     Generate with AI
                   </span>
-                  {promptOpen
-                    ? <ChevronUp className="w-3.5 h-3.5 text-muted-foreground" />
-                    : <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />}
+                  {promptOpen ? (
+                    <ChevronUp className="w-3.5 h-3.5 text-muted-foreground" />
+                  ) : (
+                    <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
+                  )}
                 </button>
 
                 <AnimatePresence initial={false}>
@@ -264,7 +282,8 @@ export default function GmailPanel({ contactEmail = "", contactName = "", onClos
                     >
                       <div className="px-3.5 pb-3.5 pt-1 space-y-2.5 border-t border-border">
                         <p className="text-[11px] text-muted-foreground leading-relaxed">
-                          Describe what to write — the AI will fill the editor with a polished, ready-to-send email.
+                          Describe what to write — the AI will fill the editor
+                          with a polished, ready-to-send email.
                         </p>
                         <textarea
                           rows={3}
@@ -285,9 +304,14 @@ export default function GmailPanel({ contactEmail = "", contactName = "", onClos
                           className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 disabled:opacity-50 transition-all active:scale-95"
                         >
                           {generating ? (
-                            <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Generating…</>
+                            <>
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" />{" "}
+                              Generating…
+                            </>
                           ) : (
-                            <><Wand2 className="w-3.5 h-3.5" /> Generate Email</>
+                            <>
+                              <Wand2 className="w-3.5 h-3.5" /> Generate Email
+                            </>
                           )}
                         </button>
                       </div>
@@ -345,18 +369,26 @@ export default function GmailPanel({ contactEmail = "", contactName = "", onClos
           <div className="px-5 py-3.5 border-t border-border shrink-0 flex items-center gap-3">
             <button
               onClick={handleSend}
-              disabled={sendStatus === "sending" || !subject.trim() || isBodyEmpty}
+              disabled={
+                sendStatus === "sending" || !subject.trim() || isBodyEmpty
+              }
               className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-primary-foreground text-xs font-bold hover:opacity-90 disabled:opacity-40 transition-all active:scale-95"
             >
               {sendStatus === "sending" ? (
-                <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Sending…</>
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" /> Sending…
+                </>
               ) : (
-                <><Send className="w-3.5 h-3.5" /> Send to {contactName}</>
+                <>
+                  <Send className="w-3.5 h-3.5" /> Send to {contactName}
+                </>
               )}
             </button>
             <div className="flex items-center gap-1.5 shrink-0">
               <Sparkles className="w-3 h-3 text-muted-foreground" />
-              <p className="text-[10px] text-muted-foreground whitespace-nowrap">NVIDIA NIM</p>
+              <p className="text-[10px] text-muted-foreground whitespace-nowrap">
+                NVIDIA NIM
+              </p>
             </div>
           </div>
         )}
