@@ -49,7 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         },
       );
 
-      setUser(response.data);
+      setUser(response.data.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setError(
