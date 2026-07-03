@@ -3,11 +3,22 @@ import { AuthRequest } from "../../middleware/jwt-verify";
 import { prisma } from "../../lib/prisma";
 
 export const getAllLeads = async (
-  _req: AuthRequest,
+  req: AuthRequest,
   res: Response
 ): Promise<Response> => {
   try {
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({
+        message: "Unauthorized",
+      });
+    }
+
     const leads = await prisma.lead.findMany({
+      where: {
+        assignedToId: userId,
+      },
       orderBy: { createdAt: "desc" },
     });
 
@@ -28,6 +39,13 @@ export const getLeadById = async (
 ): Promise<Response> => {
   try {
     const { id } = req.params as { id: string };
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({
+        message: "Unauthorized",
+      });
+    }
 
     if (!id) {
       return res.status(400).json({
@@ -42,6 +60,12 @@ export const getLeadById = async (
     if (!lead) {
       return res.status(404).json({
         message: "Lead not found",
+      });
+    }
+
+    if (lead.assignedToId !== userId) {
+      return res.status(403).json({
+        message: "Unauthorized access to this lead",
       });
     }
 

@@ -8,6 +8,13 @@ export const deleteLead = async (
 ): Promise<Response> => {
   try {
     const { id } = req.params as { id: string };
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({
+        message: "Unauthorized",
+      });
+    }
 
     if (!id) {
       return res.status(400).json({
@@ -22,6 +29,12 @@ export const deleteLead = async (
     if (!existingLead) {
       return res.status(404).json({
         message: "Lead not found",
+      });
+    }
+
+    if (existingLead.assignedToId !== userId) {
+      return res.status(403).json({
+        message: "Unauthorized access to this lead",
       });
     }
 
