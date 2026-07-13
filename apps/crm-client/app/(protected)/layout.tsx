@@ -119,6 +119,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
 
   const navLinks = [
     { name: "Leads", href: "/leads", icon: Users },
+    { name: "Analytics", href: "/analytics", icon: BarChart3 },
     { name: "Inbox", href: "/inbox", icon: Mail },
     { name: "Profile", href: "/profile", icon: User },
   ];
