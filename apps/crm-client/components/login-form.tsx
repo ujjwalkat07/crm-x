@@ -21,6 +21,7 @@ import { useState } from "react";
 import { api } from "@/lib/axios";
 import axios from "axios";
 import Link from "next/dist/client/link";
+import { Sparkles, UserCheck } from "lucide-react";
 
 export function LoginForm({
   className,
@@ -31,6 +32,12 @@ export function LoginForm({
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  const handleFillDemo = () => {
+    setEmail("ukcode07@gmail.com");
+    setPassword("12345678");
+    setError("");
+  };
 
   const LoginHandler = async () => {
     if (!email || !password) {
@@ -60,7 +67,7 @@ export function LoginForm({
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Welcome back</CardTitle>
-          <CardDescription>Login with your Google account</CardDescription>
+          <CardDescription>Login with your account or demo credentials</CardDescription>
         </CardHeader>
         <CardContent>
           <form
@@ -75,6 +82,30 @@ export function LoginForm({
                   {error}
                 </FieldError>
               )}
+
+              {/* Reviewer / Demo Credentials Helper */}
+              <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 text-sm">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="font-medium text-xs text-primary flex items-center gap-1.5">
+                    Demo Credentials
+                  </span>
+                  
+                </div>
+                <p className="text-xs text-muted-foreground mb-2.5">
+                  No signup needed. Click below to auto-fill demo credentials.
+                </p>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="w-full bg-background hover:bg-muted font-medium border-primary/30 text-xs h-8 cursor-pointer"
+                  onClick={handleFillDemo}
+                >
+                  <UserCheck className="size-3.5 mr-1" />
+                  Fill Demo Credentials
+                </Button>
+              </div>
+
               <Field>
                 <Button variant="outline" type="button">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -120,7 +151,7 @@ export function LoginForm({
                 />
               </Field>
               <Field>
-                <Button type="submit" onClick={LoginHandler} disabled={loading}>
+                <Button type="submit" disabled={loading}>
                   {loading ? "Logging in..." : "Login"}
                 </Button>
                 <FieldDescription className="text-center">

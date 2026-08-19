@@ -135,6 +135,9 @@ export function SignupForm({
                 <FieldDescription className="text-center">
                   Already have an account? <Link href="/login">Sign in</Link>
                 </FieldDescription>
+                <FieldDescription className="text-center text-xs text-muted-foreground">
+                  Reviewing the app? <Link href="/login" className="font-medium text-primary underline-offset-4 hover:underline">Use Demo Credentials</Link>
+                </FieldDescription>
               </Field>
             </FieldGroup>
           </form>

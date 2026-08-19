@@ -6,7 +6,7 @@ import { prisma } from "../../lib/prisma";
 
 const NVIDIA_BASE_URL = "https://integrate.api.nvidia.com/v1";
 
-// ── Controller: AI Generate Email
+// Controller: AI Generate Email
 export const aiGenerateEmail = async (
   req: AuthRequest,
   res: Response,
@@ -88,7 +88,7 @@ Return ONLY the JSON object.`;
   }
 };
 
-// ── Controller: Send Email via SMTP
+// Controller: Send Email via SMTP
 export const sendEmail = async (
   req: AuthRequest,
   res: Response,
@@ -158,7 +158,7 @@ export const sendEmail = async (
   }
 };
 
-// ── Controller: Get Sent Emails
+// Controller: Get Sent Emails
 export const getEmails = async (
   req: AuthRequest,
   res: Response,
